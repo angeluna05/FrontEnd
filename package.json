@@ -3,14 +3,12 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-  "start": "ng serve",
+    "start": "ng serve",
+    "serve-mobil":"cng serve --host=0.0.0.0",
+    "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e",
-    "build": "node --max-old-space-size=999999999 $(which ng) build --configuration production",
-      "postinstall": "ls -R && npm ls"
-
-
+    "e2e": "ng e2e"
   },
   "private": true,
   "dependencies": {
