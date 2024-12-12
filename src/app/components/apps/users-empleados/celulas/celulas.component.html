@@ -1,0 +1,245 @@
+<!-- 
+<div class="card">
+    <div class="card-header">
+      <h5>Retos pasados</h5>
+    </div>
+    <div class="card-body">
+      <owl-carousel-o [options]="owlcarousel2Options">
+          <ng-template carouselSlide class="item" [id]="img.id" *ngFor="let img of owlcarousel1">
+            <img [src]="[img.img]" width="350px" height="350px">
+          </ng-template>
+      </owl-carousel-o>
+    </div>
+  </div> -->
+
+
+
+<div>
+  <br>
+  <br>
+  <div class="card-body">
+    <div class="col-xl-12 xl-80 order-xl-0 order-1 box-col-12">
+      <div class="row d-flex justify-content-center" *ngIf="celulas.length > 0; else noCelulas">
+        <!-- Tarjeta principal sin imagen -->
+        <div class="card col-md-10 mb-4" style="margin-bottom: 30px;">
+          <div class="job-search">
+            <div class="card-body">
+              <div class="media">
+                <div class="media-body">
+                  <h6 class="f-w-600">
+                    <a href="javascript:void(0)">Células</a>
+                  </h6>
+                  <p>Información sobre las células actuales...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjetas para cada célula -->
+        <div class="card col-md-5 mb-4" *ngFor="let celulas of celulas" style="margin: 15px;">
+          <a href="javascript:void(0)" (click)="detallemodal(detalle, celulas)">
+            <div class="job-search">
+              <div class="card-body">
+                <div class="media">
+                  <!-- Imagen de la célula -->
+                  <img class="img-40 img-fluid m-r-20" [src]="celulas.logo" alt="Logo">
+                  <div class="media-body">
+                    <h6 class="f-w-600">
+                      <a href="javascript:void(0)">{{celulas.nombre}}</a>
+                    </h6>
+
+
+                    <p>
+                      <span>Desde: {{celulas.fechaInicio}}</span>
+                      <br>
+                      <span>Hasta: {{celulas.fechaFin}}</span>
+                    </p>
+                  </div>
+                </div>
+                <div class="job-description">
+                  <p>{{celulas.objetivo}}</p>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal para mostrar los detalles del reto -->
+<ng-template #detalle let-modal>
+  <div class="modal-header p-4">
+    <div class="d-flex align-items-center">
+      <i class="fa fa-trophy me-2 fs-4"></i>
+      <h4 class="modal-title mb-0">{{ detalles?.nombre }}</h4>
+    </div>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  
+  <div class="modal-body p-4">
+    <div class="col-sm-12" *ngIf="detalles">
+      <!-- Descripción del Reto -->
+      <div class="card mb-4 border-0 bg-light">
+        <div class="card-body">
+          <h5 class="text-primary mb-3">Descripción de la Celula</h5>
+          <p class="lead">{{ detalles?.objetivo }}</p>
+        </div>
+      </div>
+
+      <!-- Timeline del Reto -->
+      <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+          <h5 class="text-primary mb-4">Línea de Tiempo</h5>
+          
+          <div class="timeline">
+            <!-- Inscripción -->
+            <div class="timeline-item">
+              <div class="timeline-marker bg-info"></div>
+              <div class="timeline-content">
+                <h6 class="fw-bold text-info">Período de Inscripción</h6>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <small class="text-muted">Inicio:</small>
+                    <p class="mb-0">{{ detalles?.inicioInscripcion | date:'dd MMM yyyy' }}</p>
+                  </div>
+                  <div>
+                    <small class="text-muted">Fin:</small>
+                    <p class="mb-0">{{ detalles?.finInscripcion | date:'dd MMM yyyy' }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Desarrollo del Reto -->
+            <div class="timeline-item">
+              <div class="timeline-marker bg-warning"></div>
+              <div class="timeline-content">
+                <h6 class="fw-bold text-warning">Desarrollo del Reto</h6>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <small class="text-muted">Inicio:</small>
+                    <p class="mb-0">{{ detalles?.fechaInicio | date:'dd MMM yyyy' }}</p>
+                  </div>
+                  <div>
+                    <small class="text-muted">Fin:</small>
+                    <p class="mb-0">{{ detalles?.fechaFin | date:'dd MMM yyyy' }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card border-0 bg-white">
+              <div class="card-body">
+                <h5 class="text-primary mb-3">Detalles Adicionales</h5>
+                
+                <div class="list-group list-group-flush">
+                  <div class="list-group-item d-flex justify-content-between align-items-center"style="color: black;">
+                    <span class="text-muted" >Empresa</span>
+                    <span style="color: black;">{{ detalles.empresaid.nombre}}</span>
+                  </div>
+                  <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <span class="text-muted" style="color: black;">Encargado</span>
+                    <span style="color: black;">{{ detalles.encargadoid.nombre +' '+detalles.encargadoid.apellido}}</span>
+                  </div>
+                  <div class="list-group-item d-flex justify-content-between align-items-center"style="color: black;">
+                    <span class="text-muted" >Facilitador</span>
+                    <span style="color: black;">{{ detalles.empleadoid.nombre +' '+ detalles.empleadoid.apellido }}</span>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</ng-template>
+
+<style>
+.timeline {
+  position: relative;
+  padding: 1rem 0;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0.75rem;
+  top: 0;
+  height: 100%;
+  width: 2px;
+  background: #e9ecef;
+}
+.text-muted{
+  color: black !important;
+}
+.timeline-item {
+  position: relative;
+  padding-left: 3rem;
+  padding-bottom: 2rem;
+}
+.lead{
+  margin: 0;
+  font-size: 1rem;
+}
+.timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+.timeline-marker {
+  position: absolute;
+  left: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+}
+
+.timeline-content {
+  padding: 1.5rem;
+  background: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+}
+
+.modal-header {
+  border-bottom: none;
+}
+
+.card {
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+</style>
+
+
+<ng-template #noCelulas>
+  <div class="card-body">
+    <div class="col-xl-12 xl-80 order-xl-0 order-1 box-col-12">
+      <div class="row d-flex justify-content-center">
+        <!-- Tarjeta principal sin imagen -->
+        <div class="card col-md-10 mb-4" style="margin-bottom: 30px;">
+          <div class="job-search">
+            <div class="card-body">
+              <div class="media">
+                <div class="media-body">
+                  <h6 class="f-w-600">
+                    <a href="javascript:void(0)">Células</a>
+                  </h6>
+                  <p>Aún no hay células...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,646 @@
+<app-breadcrumb [title]="'retos'" [items]="['Apps']" [active_item]="'retos'"></app-breadcrumb>
+
+<!-- Container-fluid starts -->
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <h5>Retos</h5>
+        </div>
+        <div class="card-body custom-datatable noscroll">
+          <div class="custom-datatable table-responsive">
+            <div class="file-content">
+              <div class="card-header">
+                <div class="media">
+                  <form class="form-inline" action="#" method="get">
+                    <div class="form-group mb-0 text-end">
+                      <i class="fa fa-search"></i>
+                      <input class="form-control-plaintext" type="text" placeholder="Buscar..." [(ngModel)]="searchTerm"
+                        (input)="onSearchTermChange()" />
+                    </div>
+                  </form>
+                  <div class="media-body text-end">
+                    <button class="btn btn-pill btn-primary" type="button" (click)="Crear(createModal)">Registrar reto</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col" sortable="nombre" (sort)="onSort($event)">Nombre</th>
+                  <th scope="col" sortable="descripcion" (sort)="onSort($event)">Descripción</th>
+                  <th scope="col" sortable="fechaInicio" (sort)="onSort($event)">Fecha de Inicio</th>
+                  <th scope="col" sortable="fechaFin" (sort)="onSort($event)">Fecha de Fin</th>
+                  <th scope="col" sortable="estado" (sort)="onSort($event)">Estado</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of tableItem$ | async">
+                  <td>
+                    <ngb-highlight [result]="item.nombre" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="item.descripcion" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="item.fechaInicio | date:'dd/MM/yyyy'" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="item.fechaFin | date:'dd/MM/yyyy'" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="item.estado" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <div class="action">
+                      <ul class="action-icons">
+                        <li class="delete">
+                          <a (click)="openVerticallyCentered(content, item.id)">
+                            <span class="icon-circle">
+                              <i class="icofont icofont-ui-user-group"></i>
+                            </span>
+                          </a>
+                        </li>
+                        <li class="status">
+                          <a (click)="VerDetalles(detalleModal, item)">
+                            <span class="icon-circle">
+                              <i class="icofont icofont-document-search"></i>
+                            </span>
+                          </a>
+                        </li>
+                        <li class="edit">
+                          <a (click)="Editar(content1, item)">
+                            <span class="icon-circle">
+                              <i class="fa fa-pencil-square-o"></i>
+                            </span>
+                          </a>
+                        </li>
+                        <li class="status">
+                          <a (click)="withConfirmation(item)">
+                            <span class="icon-circle">
+                              <i class="icofont icofont-retweet"></i>
+                            </span>
+                          </a>
+                        </li>
+
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="d-flex justify-content-between mt-3">
+              <select class="form-select" style="width: auto" name="pageSize" [(ngModel)]="service.pageSize">
+                <option [ngValue]="2">2 items por página</option>
+                <option [ngValue]="4">4 items por página</option>
+                <option [ngValue]="6">6 items por página</option>
+              </select>
+              <ngb-pagination class="ms-3" [collectionSize]="(total$ | async)!" [(page)]="service.page"
+                [pageSize]="service.pageSize"></ngb-pagination>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para crear un reto -->
+<ng-template #createModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Crear Nuevo Reto</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <form class="needs-validation" novalidate [ngClass]="{ 'was-validated': validate }">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label" for="createNombre">Nombre<span class="red-asterisk">*</span></label>
+          <input class="form-control" id="createNombre" type="text" placeholder="Nombre"
+            [(ngModel)]="newReto.nombre" name="nombre" required [ngClass]="{ 'is-invalid': errorMessages?.nombre }" />
+          <div *ngIf="errorMessages?.nombre" class="invalid-feedback">
+            {{ errorMessages.nombre }}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="createDescripcion">Descripción<span class="red-asterisk">*</span></label>
+
+            <textarea class="form-control" id="createDescripcion" type="text" placeholder="Descripción"
+            [(ngModel)]="newReto.descripcion" name="descripcion" required [ngClass]="{ 'is-invalid': errorMessages?.descripcion }" style="height: 10px;"></textarea>
+          <div *ngIf="errorMessages?.descripcion" class="invalid-feedback">
+            {{ errorMessages.descripcion }}
+          </div>
+        </div>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label" for="createFechaInicio">Fecha de Inicio<span class="red-asterisk">*</span></label>
+          <input class="form-control" id="createFechaInicio" type="date" placeholder="Fecha de Inicio"
+            [(ngModel)]="newReto.fechaInicio" name="fechaInicio" required [ngClass]="{ 'is-invalid': errorMessages?.fechaInicio }" />
+          <div *ngIf="errorMessages?.fechaInicio" class="invalid-feedback">
+            {{ errorMessages.fechaInicio }}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="createFechaFin">Fecha de Fin<span class="red-asterisk">*</span></label>
+          <input class="form-control" id="createFechaFin" type="date" placeholder="Fecha de Fin"
+            [(ngModel)]="newReto.fechaFin" name="fechaFin" required [ngClass]="{ 'is-invalid': errorMessages?.fechaFin }" />
+          <div *ngIf="errorMessages?.fechaFin" class="invalid-feedback">
+            {{ errorMessages.fechaFin }}
+          </div>
+        </div>
+      </div>
+      
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label" for="createInicioInscripcion">Inicio de Inscripción<span class="red-asterisk">*</span></label>
+          <input class="form-control" id="createInicioInscripcion" type="date" placeholder="Inicio de Inscripción"
+            [(ngModel)]="newReto.inicioInscripcion" name="inicioInscripcion" required [ngClass]="{ 'is-invalid': errorMessages?.inicioInscripcion }" />
+          <div *ngIf="errorMessages?.inicioInscripcion" class="invalid-feedback">
+            {{ errorMessages.inicioInscripcion }}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="createFinInscripcion">Fin de Inscripción<span class="red-asterisk">*</span></label>
+          <input class="form-control" id="createFinInscripcion" type="date" placeholder="Fin de Inscripción"
+            [(ngModel)]="newReto.finInscripcion" name="finInscripcion" required [ngClass]="{ 'is-invalid': errorMessages?.finInscripcion }" />
+          <div *ngIf="errorMessages?.finInscripcion" class="invalid-feedback">
+            {{ errorMessages.finInscripcion }}
+          </div>
+        </div>
+      </div>
+      <div class="row g-3">
+        <!-- <div class="col-md-6">
+          <label class="form-label" for="createMaximoPersonas">Máximo de Personas</label>
+          <input class="form-control" id="createMaximoPersonas" type="number" placeholder="Máximo de Personas"
+            [(ngModel)]="newReto.maximoPersonas" name="maximoPersonas" required [ngClass]="{ 'is-invalid': errorMessages?.maximoPersonas }" />
+          <div *ngIf="errorMessages?.maximoPersonas" class="invalid-feedback">
+            {{ errorMessages.maximoPersonas }}
+          </div>
+        </div> -->
+        <div class="col-md-6">
+          <label class="form-label" for="createTipoAcceso">Tipo de Acceso<span class="red-asterisk">*</span></label>
+          <select class="form-select" id="createTipoAcceso" [(ngModel)]="newReto.tipo_acceso" name="tipo_acceso" required>
+            <option selected disabled value="">Escoge una opción</option>
+            <option value="Abierto">Abierto</option>
+            <option value="Cerrado">Cerrado</option>
+          </select>
+          <div class="invalid-feedback">Por favor, selecciona un tipo de acceso.</div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="createEmpleado">Facilitador<span class="red-asterisk">*</span></label>
+          <select class="form-select" id="createEmpleado" [(ngModel)]="newReto.empleadoid" name="empleadoid" required>
+
+            <option *ngFor="let empleado of empleados" [ngValue]="empleado.id">{{ empleado.nombre }}</option>
+          </select>
+          <div class="invalid-feedback">Por favor, selecciona un empleado.</div>
+        </div>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label" for="createEmpresa">Empresa<span class="red-asterisk">*</span></label>
+          <select class="form-select" id="createEmpresa" [(ngModel)]="newReto.empresaid" name="empresaid" required (change)="onEmpresaChange($event)">
+
+            <option *ngFor="let empresa of empresas" [value]="empresa.id">{{ empresa.nombre }}</option>
+          </select>
+          <div class="invalid-feedback">Por favor, selecciona una empresa.</div>
+        </div>
+        
+        <div class="col-md-6">
+          <label class="form-label" for="createEncargado">Encargado<span class="red-asterisk">*</span></label>
+          <select class="form-select" id="createEncargado" [(ngModel)]="newReto.encargadoid" name="rolid" required>
+            <option selected  value="">Escoge una opción</option>
+
+            <option *ngFor="let encargado of encargadosFiltrados" [ngValue]="encargado">{{ encargado.nombre }} {{ encargado.apellido }}</option>
+            <option *ngIf="!encargadosFiltrados.length" value="" disabled>No hay encargados disponibles</option>
+          </select>
+          
+          <div class="invalid-feedback">Por favor, selecciona un encargado.</div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">Cancelar</button>
+    <button type="button" class="btn btn-primary" (click)="createReto()">Registrar</button>
+  </div>
+</ng-template>
+
+
+<!-- Modal para editar una célula existente -->
+<ng-template #content1 let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Editar Reto</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <form class="needs-validation" novalidate [ngClass]="{ 'was-validated': validate }">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label" for="editNombre">Nombre<span class="red-asterisk">*</span></label>
+          <input class="form-control" id="editNombre" type="text" placeholder="Nombre"
+            [(ngModel)]="selectedReto.nombre" name="nombre" required [ngClass]="{ 'is-invalid': errorMessages?.nombre }" />
+          <div *ngIf="errorMessages?.nombre" class="invalid-feedback">
+            {{ errorMessages.nombre }}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="editDescripcion">Descripción<span class="red-asterisk">*</span></label>
+            <textarea class="form-control" id="editDescripcion" type="text" placeholder="Descripción"
+            [(ngModel)]="selectedReto.descripcion" name="descripcion" required [ngClass]="{ 'is-invalid': errorMessages?.descripcion }" style="height: 10px;"></textarea>
+          <div *ngIf="errorMessages?.descripcion" class="invalid-feedback">
+            {{ errorMessages.descripcion }}
+          </div>
+        </div>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label" for="editFechaInicio">Fecha de Inicio<span class="red-asterisk">*</span></label>
+          <input class="form-control" id="editFechaInicio" type="date" placeholder="Fecha de Inicio"
+            [(ngModel)]="selectedReto.fechaInicio" name="fechaInicio" required [ngClass]="{ 'is-invalid': errorMessages?.fechaInicio }" />
+          <div *ngIf="errorMessages?.fechaInicio" class="invalid-feedback">
+            {{ errorMessages.fechaInicio }}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="editFechaFin">Fecha de Fin<span class="red-asterisk">*</span></label>
+          <input class="form-control" id="editFechaFin" type="date" placeholder="Fecha de Fin"
+            [(ngModel)]="selectedReto.fechaFin" name="fechaFin" required [ngClass]="{ 'is-invalid': errorMessages?.fechaFin }" />
+          <div *ngIf="errorMessages?.fechaFin" class="invalid-feedback">
+            {{ errorMessages.fechaFin }}
+          </div>
+        </div>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label" for="editInicioInscripcion">Inicio de Inscripción<span class="red-asterisk">*</span></label>
+          <input class="form-control" id="editInicioInscripcion" type="date" placeholder="Inicio de Inscripción"
+            [(ngModel)]="selectedReto.inicioInscripcion" name="inicioInscripcion" required [ngClass]="{ 'is-invalid': errorMessages?.inicioInscripcion }" />
+          <div *ngIf="errorMessages?.inicioInscripcion" class="invalid-feedback">
+            {{ errorMessages.inicioInscripcion }}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="editFinInscripcion">Fin de Inscripción<span class="red-asterisk">*</span></label>
+          <input class="form-control" id="editFinInscripcion" type="date" placeholder="Fin de Inscripción"
+            [(ngModel)]="selectedReto.finInscripcion" name="finInscripcion" required [ngClass]="{ 'is-invalid': errorMessages?.finInscripcion }" />
+          <div *ngIf="errorMessages?.finInscripcion" class="invalid-feedback">
+            {{ errorMessages.finInscripcion }}
+          </div>
+        </div>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label" for="editTipoAcceso">Tipo de Acceso<span class="red-asterisk">*</span></label>
+          <select class="form-select" id="editTipoAcceso" [(ngModel)]="selectedReto.tipo_acceso" name="tipo_acceso" required>
+            <option value="Abierto">Abierto</option>
+            <option value="Cerrado">Cerrado</option>
+          </select>
+          <div class="invalid-feedback">Por favor, selecciona un tipo de acceso.</div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="editEmpleado">Facilitador<span class="red-asterisk">*</span></label>
+          <select class="form-select" id="editEmpleado" [(ngModel)]="selectedReto.empleadoid.id" name="empleadoid" required>
+            <option *ngFor="let empleado of empleados" [ngValue]="empleado.id">{{ empleado.nombre }}</option>
+          </select>
+          <div class="invalid-feedback">Por favor, selecciona un empleado.</div>
+        </div>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label" for="editEmpresa">Empresa<span class="red-asterisk">*</span></label>
+          <select class="form-select" id="editEmpresa" [(ngModel)]="selectedReto.empresaid.id" name="empresaid" required (change)="onEmpresaChange($event)">
+            <option *ngFor="let empresa of empresas" [value]="empresa.id">{{ empresa.nombre }}</option>
+          </select>
+          <div class="invalid-feedback">Por favor, selecciona una empresa.</div>
+        </div>
+        
+        <div class="col-md-6">
+          <label class="form-label" for="editEncargado">Encargado<span class="red-asterisk">*</span></label>
+          <select class="form-select" id="editEncargado" [(ngModel)]="selectedReto.encargadoid.id" name="encargadoid" required>
+            <option *ngFor="let encargado of encargadosFiltrados" [ngValue]="encargado.id">{{ encargado.nombre }} {{ encargado.apellido }}</option>
+            <option *ngIf="!encargadosFiltrados.length" value="" disabled>No hay encargados disponibles</option>
+          </select>
+          <div class="invalid-feedback">Por favor, selecciona un encargado.</div>
+        </div>
+        
+        
+        
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">Cancelar</button>
+    <button type="button" class="btn btn-primary" (click)="editReto()">Guardar Cambios</button>
+  </div>
+</ng-template>
+
+
+
+<!-- Modal para ver detalles -->
+<ng-template #detalleModal let-modal>
+  <div class="modal-header p-4">
+    <div class="d-flex align-items-center">
+      <i class="fa fa-trophy me-2 fs-4"></i>
+      <h4 class="modal-title mb-0">Detalles del Reto</h4>
+    </div>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  
+  <div class="modal-body p-4">
+    <div *ngIf="selectedReto" >
+      <!-- Información Principal del Reto -->
+        <div class="card mb-4 border-0 bg-light">
+          <div class="card-body">
+            <h5 class="text-primary mb-3">{{ selectedReto.nombre }}</h5>
+            <p class="lead">{{ selectedReto.descripcion }}</p>
+          </div>
+        </div>
+
+        <!-- Timeline del Reto -->
+        <div class="card mb-4 shadow-sm">
+          <div class="card-body">
+            <h5 class="text-primary mb-4">Línea de Tiempo</h5>
+            
+            <div class="timeline">
+              <!-- Inscripción -->
+              <div class="timeline-item">
+                <div class="timeline-marker bg-info"></div>
+                <div class="timeline-content">
+                  <h6 class="fw-bold text-info">Período de Inscripción</h6>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <small class="text-muted">Inicio:</small>
+                      <p class="mb-0">{{ selectedReto.inicioInscripcion | date:'dd MMM yyyy' }}</p>
+                    </div>
+                    <div>
+                      <small class="text-muted">Fin:</small>
+                      <p class="mb-0">{{ selectedReto.finInscripcion | date:'dd MMM yyyy' }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Desarrollo del Reto -->
+              <div class="timeline-item">
+                <div class="timeline-marker bg-warning"></div>
+                <div class="timeline-content">
+                  <h6 class="fw-bold text-warning">Desarrollo del Reto</h6>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <small class="text-muted">Inicio:</small>
+                      <p class="mb-0">{{ selectedReto.fechaInicio | date:'dd MMM yyyy' }}</p>
+                    </div>
+                    <div>
+                      <small class="text-muted">Fin:</small>
+                      <p class="mb-0">{{ selectedReto.fechaFin | date:'dd MMM yyyy' }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      <!-- Información Adicional -->
+        <div class="card border-0 bg-white">
+          <div class="card-body">
+            <h5 class="text-primary mb-3">Detalles Adicionales</h5>
+            
+            <div class="list-group list-group-flush">
+              <div class="list-group-item d-flex justify-content-between align-items-center">
+                <span class="text-muted" style="color: black;">Tipo de Acceso</span>
+                <span class="badge bg-info">{{ selectedReto.tipo_acceso }}</span>
+              </div>
+              <div class="list-group-item d-flex justify-content-between align-items-center"style="color: black;">
+                <span class="text-muted" >Facilitador</span>
+                <span style="color: black;">{{ selectedReto.empleadoid.nombre +' '+ selectedReto.empleadoid.apellido }}</span>
+              </div>
+              <div class="list-group-item d-flex justify-content-between align-items-center">
+                <span class="text-muted" style="color: black;">Encargado</span>
+                <span style="color: black;">{{ selectedReto.encargadoid.nombre +' '+selectedReto.encargadoid.apellido}}</span>
+              </div>
+              <div class="list-group-item d-flex justify-content-between align-items-center">
+                <span class="text-muted" style="color: black;">Estado</span>
+                <span class="badge" [ngClass]="{
+                  'bg-custom-active': selectedReto.estado === 'En curso',
+                  'bg-success': selectedReto.estado === 'Finalizado'
+                }">
+                  {{ selectedReto.estado }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+  
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Close click')">Cerrar</button>
+    <button type="button" class="btn btn-primary" *ngIf="selectedReto.estado === 'Activo'">
+      Participar
+    </button>
+  </div>
+</ng-template>
+
+<style>
+.timeline {
+  position: relative;
+  padding: 1rem 0;
+}
+
+.text-muted{
+  color: black !important;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0.75rem;
+  top: 0;
+  height: 100%;
+  width: 2px;
+  background: #e9ecef;
+}
+.lead{
+  margin: 0;
+  font-size: 1rem;
+}
+.timeline-item {
+  position: relative;
+  padding-left: 3rem;
+  padding-bottom: 2rem;
+}
+.bg-custom-active {
+  background-color: #9544ff !important;
+  color: white; /* Asegura que el texto sea visible con el fondo morado */
+}
+.timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+.timeline-marker {
+  position: absolute;
+  left: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+}
+
+.timeline-content {
+  padding: 1.5rem;
+  background: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+}
+
+.modal-header {
+  border-bottom: none;
+}
+
+.card {
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+.list-group-item {
+  padding: 0.75rem 1rem;
+  border-color: #e9ecef;
+}
+</style><ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Equipos</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <!-- Verificar si hay equipos asociados -->
+  <div *ngIf="equiposAsociados.length > 0; else noEquipos">
+    <div class="row g-3">
+      <div class="card col-md-5 mb-4 m-2" *ngFor="let equiposReto of equiposAsociados" >
+        <div class="job-search">
+          <a>
+          <div class="card-body"style="padding:10px;">
+            <div class="media">
+              <div class="media-body" >
+                  <h6 class="f-w-600">
+                    <a href="javascript:void(0)"> {{ equiposReto.equiposid.nombre }}</a>
+                  </h6>
+                <a href="javascript:void(0)"  (click)="detalleEquipo(equipoModal, equiposReto); $event.stopPropagation()" style="z-index: 99;">
+                  <p>Presiona aquí para ver a los participantes de este equipo...</p>
+                </a>
+              </div>
+            </div>
+          </div>
+        </a>
+        </div>
+      </div>
+    </div>
+  </div>
+    <!-- Mensaje alternativo si no hay equipos -->
+    <ng-template #noEquipos>
+      <p>Aún no hay equipos inscritos a este reto.</p>
+    </ng-template>
+  </div>
+  <div class="modal-footer">
+  </div>
+</ng-template>
+<ng-template #equipoModal let-modal>
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Equipo: {{jovenesporequitotal?.equiposid?.nombre}}</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+</div>
+<div class="card col-md-12 mb-0 m-2" style="box-shadow: none !important;">
+  <div class="job-search">
+    <div class="card-body">
+      <div class="media">
+        <div class="media-body">
+          <h6 class="f-w-600">
+            <a href="javascript:void(0)">Reto: {{unretoporequipo?.retosid?.nombre}}</a>
+          </h6>
+          <br>
+          
+          <div class="participants-container"  *ngIf="jovenesporequitotal.jovenesid.length > 0; else noJovenes">
+            <div class="list-group">
+              <div *ngFor="let joven of jovenesporequitotal?.jovenesid" 
+                   class="list-group-item1 list-group-item1-action d-flex align-items-center p-2 mb-1 rounded">
+                <div class="avatar me-2">
+                  {{ joven.nombre | slice:0:1 }}{{ joven.apellido | slice:0:1 }}
+                </div>
+                <div class="participant-info flex-grow-1">
+                  <h6 class="mb-0">{{ joven.nombre }} {{ joven.apellido }}</h6>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ng-template #noJovenes>
+          <div class="participants-container">
+            <div class="list-group">
+              <div  
+                   class="list-group-item1 list-group-item-action d-flex align-items-center p-2 mb-1 rounded">
+                <div class="avatar me-2">
+                  N/A
+                </div>
+                <div class="participant-info flex-grow-1">
+                  <h6 class="mb-0">Sin jóvenes en este equipo</h6>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</ng-template>
+<style>
+.participants-container {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #6c757d;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-right: 10px;
+  font-size: 0.8rem;
+}
+
+.list-group-item1 {
+  transition: all 0.2s ease;
+  border: 1px solid #dee2e6;
+  color: #212529;
+}
+
+.list-group-item1:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background-color: #f8f9fa;
+}
+
+.participant-info h6 {
+  color: #212529;
+  font-weight: 500;
+}
+
+.list-group-item1:hover .participant-info h6 {
+  color: #007bff;
+}
+</style>

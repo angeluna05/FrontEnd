@@ -1,0 +1,31 @@
+<div class="card">
+  <div class="card-header card-no-border">
+    <div class="header-top">
+      <h5 class="m-0">Estado de las sesiones</h5>
+      
+    </div>
+  </div>
+  <div class="card-body pt-0">
+    <div class="light-card balance-card d-inline-block">
+      <h4 class="mb-0">40 <span class="f-light f-14">Finalizadas</span></h4>
+    </div>
+    <div class="order-wrapper">
+      <div id="order-goal">
+        <apx-chart
+          [series]="monthlyOrderChart.series"
+          [chart]="monthlyOrderChart.chart"
+          [colors]="monthlyOrderChart.colors"
+          [fill]="monthlyOrderChart.fill"
+          [dataLabels]="monthlyOrderChart.dataLabels"
+          [stroke]="monthlyOrderChart.stroke"
+          [grid]="monthlyOrderChart.grid"
+          [xaxis]="monthlyOrderChart.xaxis"
+          [yaxis]="monthlyOrderChart.yaxis"
+          [legend]="monthlyOrderChart.legend"
+          [tooltip]="monthlyOrderChart.tooltip"
+          [responsive]="monthlyOrderChart.responsive"
+        ></apx-chart>
+      </div>
+    </div>
+  </div>
+</div>

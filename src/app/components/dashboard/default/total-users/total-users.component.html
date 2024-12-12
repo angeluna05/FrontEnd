@@ -1,0 +1,34 @@
+<div class="card">
+  <div class="card-header card-no-border">
+    <div class="header-top">
+      <h5>Usuarios totales</h5>
+      <div class="dropdown icon-dropdown">
+        <!-- <button class="btn dropdown-toggle" type="button" (click)="toggle()"><app-feather-icons [icon]="'more-horizontal'"></app-feather-icons></button> -->
+      </div>
+    </div>
+  </div>
+  <div class="card-body pt-0">
+    <ul class="user-list">
+      <li>
+        <div class="user-icon primary">
+          <div class="user-box"><i class="font-primary" data-feather="user-plus"></i></div>
+        </div>
+        <div>
+          <!-- Muestra la cantidad de jóvenes activos -->
+          <h5 class="mb-1">{{ activos }}</h5>
+          <span class="font-primary d-flex align-items-center"><i class="icon-arrow-up icon-rotate me-1"> </i><span class="f-w-500">Activos</span></span>
+        </div>
+      </li>
+      <li>
+        <div class="user-icon success">
+          <div class="user-box"><i class="font-success" data-feather="user-minus"></i></div>
+        </div>
+        <div>
+          <!-- Muestra la cantidad de jóvenes inactivos -->
+          <h5 class="mb-1">{{ inactivos }}</h5>
+          <span class="font-danger d-flex align-items-center"><i class="icon-arrow-down icon-rotate me-1"></i><span class="f-w-500">Inactivos</span></span>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

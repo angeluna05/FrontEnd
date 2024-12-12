@@ -1,0 +1,801 @@
+<br>
+<div class="card-body">
+<button class="btn btn-pill btn-primary" type="button" (click)="goBack()" *ngIf="userRole === 'ADMIN';">Regresar</button>
+</div>
+<br>
+<div>
+  <div *ngFor="let joven of jovenes" class="container centered">
+
+    <main class="projetos">
+      <br>
+      <h4 class="line-1 anim-typewriter">{{ joven.nombre + ' ' + joven.apellido }}</h4>
+
+      <div class="container-projetos"><br>
+        <ol>
+          <li>🆔 Tipo de documento: {{ joven.tipoDocumentoid.descripcion }}</li>
+          <li>📄 Número de documento: {{ joven.documento }}</li>
+          <li>🎂 Fecha de nacimiento: {{ joven.fechaNacimiento }}</li>
+          <li>📞 Número de contacto: {{ joven.numeroContacto }}</li>
+          <li>📧 Correo: {{ joven.correo }}</li>
+          <li>🏫 Tipo de Institución: {{ joven.tipo_institucion }}</li>
+          <li>🏢 Institución: {{ joven.institucion }}</li>
+          <li>💡 Habilidades: {{ joven.habilidades }}</li>
+          <li>✨ Características: {{ joven.caracteristicas }}</li>
+          <li>📝 Descripción: {{ joven.descripcion }}</li>
+        </ol>
+      </div>
+    </main>
+  </div>
+</div>
+<br><br>
+  <div class="container-fluid" >
+    <div class="row sticky-header-main">
+      <div class="col-sm-12">
+        <div class="card">
+          <div class="card-header">
+            <h5>Logros</h5>
+          </div>
+  
+          <div class="card-body" *ngIf="logros.length > 0; else noLogros">
+            <!-- Primer *ngFor para logros -->
+            <div class="sticky-note" id="board">
+              <!-- Segundo *ngFor para las notas de cada logro -->
+              <div class="note ui-draggable ui-draggable-handle" style="height: 50px;" *ngFor="let item of tableItem$ | async">
+                <div class="note_cnt">
+                  
+                  <textarea class="cnt" style="height: 200px;" disabled>{{item.descripcion}}
+                    </textarea>
+                </div>
+  
+              </div>
+            </div>
+  
+  
+          </div>
+            <div class="card-footer">
+              <div class="d-flex justify-content-between mt-3">
+                <select class="form-select" style="width: auto" name="pageSize" [(ngModel)]="service.pageSize">
+                  <option [ngValue]="4">4 items per page</option>
+                  <option [ngValue]="8">8 items per page</option>
+                </select>
+                <ngb-pagination class="ms-3" [collectionSize]="(total$ | async)!" [(page)]="service.page"
+                  [pageSize]="service.pageSize"></ngb-pagination>
+              </div>          </div>
+  
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" >
+    <div class="card-header">
+      <h5>Tus equipos</h5>
+    </div>
+    <div class="card-body">
+      <div class="col-xl-12 xl-80 order-xl-0 order-1 box-col-12">
+        <div class="row" *ngIf="jovenesEquipos.length>0;else noEquipos">
+  
+          <div class="card col-md-5 mb-4 m-2" *ngFor="let equipos of jovenesEquipos" style="margin: 15px;">
+            <a href="javascript:void(0)" (click)="detalleEquipo(equipoModal, equipos)">
+              <div class="job-search">
+                <div class="card-body">
+                  <div class="media">
+                    <div class="media-body">
+                      <h6 class="f-w-600">
+                        <a href="javascript:void(0)"> {{ equipos.equiposid.nombre }}</a>
+                      </h6>
+                      <p>Clíc aqui para ver los participantes de este equipo...</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+  
+  
+  
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card" >
+    <div class="card-header">
+      <h5>Tus retos</h5>
+    </div>
+    <div class="card-body">
+      <div class="col-xl-12 xl-80 order-xl-0 order-1 box-col-12">
+        <div class="row d-flex justify-content-center" *ngIf="equiposRetos.length> 0; else noRetos">
+  
+          <!-- Tarjetas para cada célula -->
+          <div class="card col-md-5 mb-4 m-2" *ngFor="let retos of equiposRetos" style="margin: 15px;">
+            <a href="javascript:void(0)" (click)="detallemodal(detalle, retos.retosid)">
+              <div class="job-search">
+                <div class="card-body">
+                  <div class="media">
+                    <!-- Imagen de la célula -->
+                    <img class="img-40 img-fluid m-r-20" [src]="retos.retosid.logo" alt="Logo">
+                    <div class="media-body">
+                      <h6 class="f-w-600">
+                        <a href="javascript:void(0)">{{retos.retosid.nombre}}</a>
+                      </h6>
+                      <span class="pull-right">
+                       
+                      </span>
+  
+                    
+                      <p>
+                        <span>{{retos.retosid.fechaInicio}}</span>
+                        <span> - </span>
+                        <span>{{retos.retosid.fechaFin}}</span>
+                      </p>
+                    </div>
+                  </div>
+                  <div class="job-description">
+                    <p>{{retos.retosid.descripcion}}</p>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <h5>Tus células</h5>
+    </div>
+    <div class="card-body">
+      <div class="col-xl-12 xl-80 order-xl-0 order-1 box-col-12">
+        <div class="row d-flex justify-content-center" *ngIf="celulas.length> 0; else noCelulas">
+  
+          <!-- Tarjetas para cada célula -->
+          <div class="card col-md-5 mb-4 m-2" *ngFor="let celulas of celulas" style="margin: 15px;">
+            <a href="javascript:void(0)" (click)="detallemodalCelula(detalleCelula, celulas)">
+              <div class="job-search">
+                <div class="card-body">
+                  <div class="media">
+                    <!-- Imagen de la célula -->
+                    <img class="img-40 img-fluid m-r-20" [src]="celulas.logo" alt="Logo">
+                    <div class="media-body">
+                      <h6 class="f-w-600">
+                        <a href="javascript:void(0)">{{celulas.nombre}}</a>
+                      </h6>
+                      <!-- Mostrar botón "Participar" si el joven no está inscrito y la inscripción aún está activa -->
+  
+  
+                      <!-- Mostrar botón "Retirarme" si el joven está inscrito -->
+                      <span class="pull-right" >
+                      
+                      </span>
+
+  
+                      <p>
+                        <span>Desde: {{celulas.fechaInicio}}</span>
+                        <br>
+                        <span>Hasta: {{celulas.fechaFin}}</span>
+                      </p>
+                    </div>
+                  </div>
+                  <div class="job-description">
+                    <p>{{celulas.objetivo}}</p>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <ng-template #detalle let-modal>
+    <div class="modal-header p-4">
+      <div class="d-flex align-items-center">
+        <i class="fa fa-trophy me-2 fs-4"></i>
+        <h4 class="modal-title mb-0">{{ detalles?.nombre }}</h4>
+      </div>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    
+    <div class="modal-body p-4">
+      <div class="col-sm-12" *ngIf="detalles">
+        <!-- Descripción del Reto -->
+        <div class="card mb-4 border-0 bg-light">
+          <div class="card-body">
+            <h5 class="text-primary mb-3">Descripción del Reto</h5>
+            <p class="lead">{{ detalles?.descripcion }}</p>
+          </div>
+        </div>
+  
+        <!-- Timeline del Reto -->
+        <div class="card mb-4 shadow-sm">
+          <div class="card-body">
+            <h5 class="text-primary mb-4">Línea de Tiempo</h5>
+            
+            <div class="timeline">
+              <!-- Inscripción -->
+              <div class="timeline-item">
+                <div class="timeline-marker bg-info"></div>
+                <div class="timeline-content">
+                  <h6 class="fw-bold text-info">Período de Inscripción</h6>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <small class="text-muted">Inicio:</small>
+                      <p class="mb-0">{{ detalles?.inicioInscripcion | date:'dd MMM yyyy' }}</p>
+                    </div>
+                    <div>
+                      <small class="text-muted">Fin:</small>
+                      <p class="mb-0">{{ detalles?.finInscripcion | date:'dd MMM yyyy' }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+  
+              <!-- Desarrollo del Reto -->
+              <div class="timeline-item">
+                <div class="timeline-marker bg-warning"></div>
+                <div class="timeline-content">
+                  <h6 class="fw-bold text-warning">Desarrollo del Reto</h6>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <small class="text-muted">Inicio:</small>
+                      <p class="mb-0">{{ detalles?.fechaInicio | date:'dd MMM yyyy' }}</p>
+                    </div>
+                    <div>
+                      <small class="text-muted">Fin:</small>
+                      <p class="mb-0">{{ detalles?.fechaFin | date:'dd MMM yyyy' }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+  
+      </div>
+    </div>
+  </ng-template>
+  
+  <style>
+  .timeline {
+    position: relative;
+    padding: 1rem 0;
+  }
+  .text-muted{
+    color: black !important;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.75rem;
+    top: 0;
+    height: 100%;
+    width: 2px;
+    background: #e9ecef;
+  }
+  .lead{
+    margin: 0;
+    font-size: 1rem;
+  }
+  .timeline-item {
+    position: relative;
+    padding-left: 3rem;
+    padding-bottom: 2rem;
+  }
+  
+  .timeline-item:last-child {
+    padding-bottom: 0;
+  }
+  
+  .timeline-marker {
+    position: absolute;
+    left: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+  }
+  
+  .timeline-content {
+    padding: 1.5rem;
+    background: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+  }
+  
+  .modal-header {
+    border-bottom: none;
+  }
+  
+  .card {
+    transition: transform 0.2s;
+  }
+  
+  .card:hover {
+    transform: translateY(-2px);
+  }
+  </style>
+<ng-template #detalleCelula let-modal>
+  <div class="modal-header p-4">
+    <div class="d-flex align-items-center">
+      <i class="fa fa-trophy me-2 fs-4"></i>
+      <h4 class="modal-title mb-0">{{ detalles?.nombre }}</h4>
+    </div>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  
+  <div class="modal-body p-4">
+    <div class="col-sm-12" *ngIf="detalles">
+      <!-- Descripción del Reto -->
+      <div class="card mb-4 border-0 bg-light">
+        <div class="card-body">
+          <h5 class="text-primary mb-3">Descripción de la Celula</h5>
+          <p class="lead">{{ detalles?.objetivo }}</p>
+        </div>
+      </div>
+
+      <!-- Timeline del Reto -->
+      <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+          <h5 class="text-primary mb-4">Línea de Tiempo</h5>
+          
+          <div class="timeline">
+            <!-- Inscripción -->
+            <div class="timeline-item">
+              <div class="timeline-marker bg-info"></div>
+              <div class="timeline-content">
+                <h6 class="fw-bold text-info">Período de Inscripción</h6>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <small class="text-muted">Inicio:</small>
+                    <p class="mb-0">{{ detalles?.inicioInscripcion | date:'dd MMM yyyy' }}</p>
+                  </div>
+                  <div>
+                    <small class="text-muted">Fin:</small>
+                    <p class="mb-0">{{ detalles?.finInscripcion | date:'dd MMM yyyy' }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Desarrollo del Reto -->
+            <div class="timeline-item">
+              <div class="timeline-marker bg-warning"></div>
+              <div class="timeline-content">
+                <h6 class="fw-bold text-warning">Desarrollo del Reto</h6>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <small class="text-muted">Inicio:</small>
+                    <p class="mb-0">{{ detalles?.fechaInicio | date:'dd MMM yyyy' }}</p>
+                  </div>
+                  <div>
+                    <small class="text-muted">Fin:</small>
+                    <p class="mb-0">{{ detalles?.fechaFin | date:'dd MMM yyyy' }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</ng-template>
+<ng-template #content1 let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Editar Jovenes</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <div class="card">
+      <div class="card-body">
+        <form class="needs-validation" novalidate [ngClass]="{ 'was-validated': validate }">
+          <div class="row g-3">
+            <!-- Campo Documento -->
+
+
+            <!-- Campo Nombre -->
+            <div class="col-md-6">
+              <label class="form-label" for="editNombre">Nombre</label>
+              <input class="form-control" id="editNombre" type="text" placeholder="Nombre"
+                [(ngModel)]="selectedjoven.nombre" name="nombre" required />
+              <div class="invalid-feedback">Por favor, ingresa un nombre válido.</div>
+            </div>
+                        <!-- Campo Apellido -->
+                        <div class="col-md-6">
+                          <label class="form-label" for="editApellido">Apellido</label>
+                          <input class="form-control" id="editApellido" type="text" placeholder="Apellido"
+                            [(ngModel)]="selectedjoven.apellido" name="apellido" required />
+                          <div class="invalid-feedback">Por favor, ingresa un apellido válido.</div>
+                        </div>
+          </div>
+          <div class="row g-3">
+            <!-- Campo Tipo de Documento -->
+            <div class="col-md-6">
+              <label class="form-label" for="editTipoDocumento">Tipo de Documento</label>
+              <select class="form-control" id="editTipoDocumento" [(ngModel)]="selectedjoven.tipoDocumentoid.id" name="tipoDocumentoid" required>
+                <option *ngFor="let tipo of tiposDocumentos" [ngValue]="tipo.id">{{ tipo.siglas }}</option>
+              </select>
+              <div class="invalid-feedback">Por favor, selecciona un tipo de documento.</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="editDocumento">Documento</label>
+              <input class="form-control" id="editDocumento" type="number" placeholder="Documento"
+                [(ngModel)]="selectedjoven.documento" name="documento" />
+              <div class="invalid-feedback">Por favor, ingresa un documento válido.</div>
+            </div>
+ 
+          </div>
+          <div class="row g-3">
+
+            <!-- Campo Número de Contacto -->
+            <div class="col-md-6">
+              <label class="form-label" for="editNumeroContacto">Número de contacto</label>
+              <input class="form-control" id="editNumeroContacto" type="text" placeholder="Número de contacto"
+                [(ngModel)]="selectedjoven.numeroContacto" name="numeroContacto" required />
+              <div class="invalid-feedback">Por favor, ingresa un número de contacto válido.</div>
+            </div>
+            <!-- Campo Correo -->
+            <div class="col-md-6">
+              <label class="form-label" for="editCorreo">Correo</label>
+              <input class="form-control" id="editCorreo" type="email" placeholder="Correo"
+                [(ngModel)]="selectedjoven.correo" name="correo" required />
+              <div class="invalid-feedback">Por favor, ingresa un correo válido.</div>
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="editTipoDocumento">Tipo de institución</label>
+              <select class="form-control" id="editTipoDocumento" [(ngModel)]="selectedjoven.tipo_institucion"
+                name="tipoDocumentoid" required>
+                <!-- Opción predeterminada vacía -->
+                <option value="" disabled selected *ngIf="!selectedjoven.tipo_institucion">Selecciona una institución</option>
+                
+                <!-- Si hay un valor, se muestra -->
+                <option *ngIf="selectedjoven.tipo_institucion">{{ selectedjoven.tipo_institucion }}</option>
+                
+                <!-- Opciones disponibles -->
+                <option>Escuela</option>
+                <option>Colegio</option>
+                <option>Tecnológico</option>
+                <option>Universidad</option>
+              </select>
+                  <div *ngIf="errorMessages?.nombre" class="invalid-feedback">
+                    {{ errorMessages.nombre }}
+                  </div>            </div>
+            
+            <!-- Campo Institución -->
+            <div class="col-md-6">
+              <label class="form-label" for="editInstitución">Institución</label>
+              <input class="form-control" id="editInstitución" type="text" placeholder="Institución"
+                [(ngModel)]="selectedjoven.institucion" name="institucion" />
+                  <div *ngIf="errorMessages?.nombre" class="invalid-feedback">
+                    {{ errorMessages.nombre }}
+                  </div>            </div>
+          </div>
+          <div class="row g-3">
+            <!-- Campo Habilidades -->
+            <div class="col-md-12">
+              <label class="form-label" for="editHabilidades">Habilidades</label>
+              <input class="form-control" id="editHabilidades" type="text" placeholder="Habilidades"
+                [(ngModel)]="selectedjoven.habilidades" name="habilidades" required />
+              <div class="invalid-feedback">Por favor, ingresa las habilidades.</div>
+            </div>
+          </div>
+          <div class="row g-3">
+            <!-- Campo Características -->
+            <div class="col-md-12">
+              <label class="form-label" for="editCaracteristicas">Características</label>
+              <input class="form-control" id="editCaracteristicas" type="text" placeholder="Características"
+                [(ngModel)]="selectedjoven.caracteristicas" name="caracteristicas" required />
+              <div class="invalid-feedback">Por favor, ingresa las características.</div>
+            </div>
+          </div>
+          <div class="row g-3">
+            <!-- Campo Descripción -->
+            <div class="col-md-12">
+              <label class="form-label" for="editDescripcion">Descripción</label>
+              <textarea class="form-control" id="editDescripcion" rows="3" placeholder="Descripción"
+                [(ngModel)]="selectedjoven.descripcion" name="descripcion" required></textarea>
+              <div class="invalid-feedback">Por favor, ingresa una descripción.</div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Cross click')">Cerrar</button>
+            <button type="button" class="btn btn-primary" (click)="editjoven(modal)">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #noLogros>
+  <div class="card-body">
+    <div class="col-xl-12 xl-80 order-xl-0 order-1 box-col-12">
+      <div class="row d-flex justify-content-center">
+        <!-- Tarjeta principal sin imagen -->
+        <div class="card col-md-10 mb-4" style="margin-bottom: 30px;">
+          <div class="job-search">
+            <div class="card-body">
+              <div class="media">
+                <div class="media-body">
+                  <h6 class="f-w-600">
+                    <a href="javascript:void(0)">Logros</a>
+                  </h6>
+                  <p>Aún no tienes logros...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<ng-template #noRetos>
+  <div class="card-body">
+    <div class="col-xl-12 xl-80 order-xl-0 order-1 box-col-12">
+      <div class="row d-flex justify-content-center">
+        <!-- Tarjeta principal sin imagen -->
+        <div class="card col-md-10 mb-4" style="margin-bottom: 30px;">
+          <div class="job-search">
+            <div class="card-body">
+              <div class="media">
+                <div class="media-body">
+                  <h6 class="f-w-600">
+                    <a href="javascript:void(0)">Retos</a>
+                  </h6>
+                  <p>Aún no estas inscrito en un reto...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</ng-template>
+<ng-template #noEquipos>
+  <div class="card-body">
+    <div class="col-xl-12 xl-80 order-xl-0 order-1 box-col-12">
+      <div class="row d-flex justify-content-center">
+        <!-- Tarjeta principal sin imagen -->
+        <div class="card col-md-10 mb-4" style="margin-bottom: 30px;">
+          <div class="job-search">
+            <div class="card-body">
+              <div class="media">
+                <div class="media-body">
+                  <h6 class="f-w-600">
+                    <a href="javascript:void(0)">Equipos</a>
+                  </h6>
+                  <p>Aún no estas inscrito en un equipo...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<ng-template #noCelulas>
+  <div class="card-body">
+    <div class="col-xl-12 xl-80 order-xl-0 order-1 box-col-12">
+      <div class="row d-flex justify-content-center">
+        <!-- Tarjeta principal sin imagen -->
+        <div class="card col-md-10 mb-4" style="margin-bottom: 30px;">
+          <div class="job-search">
+            <div class="card-body">
+              <div class="media">
+                <div class="media-body">
+                  <h6 class="f-w-600">
+                    <a href="javascript:void(0)">Células</a>
+                  </h6>
+                  <p>Aún no estas inscrito en una célula...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+  <!-- Modal para editar un empleado -->
+<ng-template #editEmpleado let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Editar facilitador</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <div class="card">
+      <div class="card-body">
+        <form class="needs-validation" novalidate [ngClass]="{ 'was-validated': validate }">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="editNombre">Nombre</label>
+              <input class="form-control" id="editNombre" type="text" placeholder="Nombre"
+                [(ngModel)]="selectedEmpleado.nombre" name="nombre" required
+                [ngClass]="{ 'is-invalid': errorMessages?.nombre }" />
+              <div *ngIf="errorMessages?.nombre" class="invalid-feedback">
+                {{ errorMessages.nombre }}
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label" for="editApellido">Apellido</label>
+              <input class="form-control" id="editApellido" type="text" placeholder="Apellido"
+                [(ngModel)]="selectedEmpleado.apellido" name="apellido" required
+                [ngClass]="{ 'is-invalid': errorMessages?.apellido }" />
+              <div *ngIf="errorMessages?.apellido" class="invalid-feedback">
+                {{ errorMessages.apellido }}
+              </div>
+            </div>
+          </div>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="editTipoDocumento">Tipo de Documento</label>
+              <select class="form-select" id="editTipoDocumento" [(ngModel)]="selectedEmpleado.tipoDocumentoid.id"
+                name="tipoDocumentoid" required [ngClass]="{ 'is-invalid': errorMessages?.tipoDocumentoid }">
+                <!-- Opciones de tipo de documento -->
+                <option *ngFor="let tipo of tiposDocumentos" [ngValue]="tipo.id">{{ tipo.descripcion }}</option>
+              </select>
+              <div *ngIf="errorMessages?.tipoDocumentoid" class="invalid-feedback">
+                {{ errorMessages.tipoDocumentoid }}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="editDocumento">Documento</label>
+              <input class="form-control" id="editDocumento" type="number" placeholder="Documento"
+                [(ngModel)]="selectedEmpleado.documento" name="documento" required
+                [ngClass]="{ 'is-invalid': errorMessages?.documento }" />
+              <div *ngIf="errorMessages?.documento" class="invalid-feedback">
+                {{ errorMessages.documento }}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="editFechaNacimiento">Fecha de Nacimiento</label>
+              <input class="form-control" id="editFechaNacimiento" type="date" placeholder="Fecha de Nacimiento"
+                [(ngModel)]="selectedEmpleado.fechaNacimiento" name="fecha_nacimiento" required
+                [ngClass]="{ 'is-invalid': errorMessages?.fechaNacimiento }" />
+              <div *ngIf="errorMessages?.fechaNacimiento" class="invalid-feedback">
+                {{ errorMessages.fechaNacimiento }}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="editCorreo">Correo</label>
+              <input class="form-control" id="editCorreo" type="email" placeholder="Correo"
+                [(ngModel)]="selectedEmpleado.correo" name="correo" required />
+            <div *ngIf="errorMessages?.correo" class="invalid-feedback">
+              {{ errorMessages.correo }}
+            </div>          
+          </div>
+          </div>
+          
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="editNumeroContacto">Número de contacto</label>
+              <input class="form-control" id="editNumeroContacto" type="text" placeholder="Número de contacto"
+                [(ngModel)]="selectedEmpleado.numeroContacto" name="numero_contacto" required
+                [ngClass]="{ 'is-invalid': errorMessages?.numeroContacto }" />
+              <div *ngIf="errorMessages?.numeroContacto" class="invalid-feedback">
+                {{ errorMessages.numeroContacto }}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="editCargo">Cargo</label>
+              <input class="form-control" id="editCargo" type="text" placeholder="Cargo"
+                [(ngModel)]="selectedEmpleado.cargo" name="cargo" required
+                [ngClass]="{ 'is-invalid': errorMessages?.cargo }" />
+              <div *ngIf="errorMessages?.cargo" class="invalid-feedback">
+                {{ errorMessages.cargo }}
+              </div>
+            </div>
+          </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Cross click')">Cerrar</button>
+              <button type="button" class="btn btn-primary" (click)="editjoven(modal)">Guardar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template #equipoModal let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Equipo: {{jovenesporequitotal?.equiposid?.nombre}}</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="card col-md-12 mb-0 m-2" style="box-shadow: none !important;">
+      <div class="job-search">
+        <div class="card-body">
+          <div class="media">
+            <div class="media-body">
+              <h6 class="f-w-600">
+                <a href="javascript:void(0)">Reto: {{unretoporequipo?.retosid?.nombre}}</a>
+              </h6>
+              <br>
+              
+              <div class="participants-container"  *ngIf="jovenesporequitotal.jovenesid.length > 0; else noJovenes">
+                <div class="list-group">
+                  <div *ngFor="let joven of jovenesporequitotal?.jovenesid" 
+                       class="list-group-item list-group-item-action d-flex align-items-center p-2 mb-1 rounded">
+                    <div class="avatar me-2">
+                      {{ joven.nombre | slice:0:1 }}{{ joven.apellido | slice:0:1 }}
+                    </div>
+                    <div class="participant-info flex-grow-1">
+                      <h6 class="mb-0">{{ joven.nombre }} {{ joven.apellido }}</h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <ng-template #noJovenes>
+              <div class="participants-container">
+                <div class="list-group">
+                  <div  
+                       class="list-group-item list-group-item-action d-flex align-items-center p-2 mb-1 rounded">
+                    <div class="avatar me-2">
+                      N/A
+                    </div>
+                    <div class="participant-info flex-grow-1">
+                      <h6 class="mb-0">Sin jóvenes en este equipo</h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+            </div>
+          </div>
+        </div>
+    
+      </div>
+    </div>
+    
+    </ng-template>
+    <style>
+    .participants-container {
+      max-height: 250px;
+      overflow-y: auto;
+    }
+    
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: #6c757d;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-right: 10px;
+      font-size: 0.8rem;
+    }
+    
+    .list-group-item {
+      transition: all 0.2s ease;
+      border: 1px solid #dee2e6;
+      color: #212529;
+    }
+    
+    .list-group-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      background-color: #f8f9fa;
+    }
+    
+    .participant-info h6 {
+      color: #212529;
+      font-weight: 500;
+    }
+    
+    .list-group-item:hover .participant-info h6 {
+      color: #007bff;
+    }
+    </style>

@@ -1,0 +1,107 @@
+<div class="container-sesiones">
+  <div class="left">
+    <div class="calendar">
+      <div class="month">
+        <i (click)="prevMonth()" class="icofont icofont-rounded-left"></i>
+        <div #date class="date"></div>
+        <i (click)="nextMonth()" class="icofont icofont-rounded-right"></i>
+      </div>
+      <div class="weekdays">
+        <div>Domingo</div>
+        <div>Lunes</div>
+        <div>Martes</div>
+        <div>Miércoles</div>
+        <div>Jueves</div>
+        <div>Viernes</div>
+        <div>Sábado</div>
+      </div>
+      <div #daysContainer class="days"></div>
+      <div class="goto-today">
+        <div class="goto">
+          <input #dateInput type="text" placeholder="MM/AAAA" class="date-input" />
+          <button (click)="gotoDate()" class="goto-btn">Buscar</button>
+        </div>
+        <button (click)="goToToday()" class="today-btn">Hoy</button>
+      </div>
+    </div>
+  </div>
+  <div class="right">
+    <div class="today-date">
+      <div #eventDay class="event-day">Miércoles</div>
+      <div #eventDate class="event-date">12 Diciembre 2022</div>
+    </div>
+    <div #eventsContainer class="events"></div>
+
+
+  </div>
+
+</div>
+
+
+<ng-template #particiantes let-modal>
+  <div class="modal-content">
+    <div class="modal-header modal-full-width">
+      <h4 class="modal-title" id="modal-basic-title">Editar Rol</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body modal-full-width">
+      <div class="card w-full">
+        <div class="card-content">
+          <div>
+            <table class="w-full border-collapse" style="width: 100%;">
+              <thead>
+                <tr class="bg-slate-100">
+                  <th class="border p-2 text-left">
+                    <div class="flex items-center space-x-2">Joven</div>
+                  </th>
+                  <th class="border p-2 text-left">
+                    <div class="flex items-center space-x-2">Asistío</div>
+                  </th>
+                  <th class="border p-2 text-left">
+                    <div class="flex items-center space-x-2">No asistío</div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let module of inscripcionsesiones | slice:pageIndex * pageSize:(pageIndex + 1) * pageSize; let i = index" 
+                    class="hover:bg-slate-50">
+                  <td class="border p-2 text-center">
+                    <div class="flex items-center space-x-2">
+                      {{module.jovenesid.nombre}}
+                    </div>
+                  </td>
+                  <td class="border p-2 text-center">
+                    <mat-radio-group [(ngModel)]="inscripcionsesiones[i + pageIndex * pageSize].estado">
+                      <mat-radio-button [value]="'Asistío'" (change)="handleChange('Asistío', module.id)">
+                      </mat-radio-button>
+                    </mat-radio-group>
+                  </td>
+                  <td class="border p-2 text-center">
+                    <mat-radio-group [(ngModel)]="inscripcionsesiones[i + pageIndex * pageSize].estado">
+                      <mat-radio-button [value]="'No asistío'" (change)="handleChange('No asistío', module.id)">
+                      </mat-radio-button>
+                    </mat-radio-group>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <!-- Agregar el paginador debajo de la tabla -->
+            <mat-paginator
+            [length]="inscripcionsesiones.length"
+            [pageSize]="pageSize"
+            (page)="onPageChange($event)"
+            [hidePageSize]="true"
+            [showFirstLastButtons]="false"
+            class="custom-paginator"
+            aria-label="Seleccionar página">
+          </mat-paginator>          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer modal-full-width">
+      <button class="btn btn-primary" type="button" (click)="asistenciaedit()">Actualizar</button>
+      <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Cerrar</button>
+    </div>
+  </div>
+</ng-template>

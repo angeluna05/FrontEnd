@@ -1,0 +1,206 @@
+<app-breadcrumb [title]="'logros'" [items]="['Apps']" [active_item]="'Logros'"></app-breadcrumb>
+
+<!-- Container-fluid starts -->
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <h5>Logros</h5>
+        </div>
+        <div class="card-body custom-datatable noscroll">
+          <div class="custom-datatable table-responsive">
+            <div class="file-content">
+              <div class="card-header">
+                <div class="media">
+                  <form class="form-inline" action="#" method="get">
+                    <div class="form-group mb-0 text-end">
+                      <i class="fa fa-search"></i>
+                      <input class="form-control-plaintext" type="text" placeholder="Buscar..." [(ngModel)]="searchTerm"
+                        (input)="onSearchTermChange()" />
+                    </div>
+                  </form>
+                  <div class="media-body text-end">
+                    <button class="btn btn-pill btn-primary" type="button" (click)="Crear(createModal)">Registrar
+                      logro</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col" sortable="descripcion" (sort)="onSort($event)">Descripción</th>
+                  <th scope="col" sortable="anoLogro" (sort)="onSort($event)">Año del Logro</th>
+                  <th scope="col" sortable="fechaRegistro" (sort)="onSort($event)">Fecha de Registro</th>
+                  <th scope="col" sortable="jovenid.nombre" (sort)="onSort($event)">Joven</th>
+                  <th scope="col" >Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of tableItem$ | async">
+                  <td>
+                    <ngb-highlight [result]="item.descripcion" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="item.anoLogro" [term]="searchTerm"></ngb-highlight>
+
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="item.fechaRegistro | date:'dd/MM/yyyy'" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="item.jovenid.nombre + ' ' + item.jovenid.apellido" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <div class="action">
+                      <ul class="action-icons">
+                        <li class="edit">
+                          <a (click)="Editar(content1, item)">
+                            <span class="icon-circle">
+                              <i class="fa fa-pencil-square-o"></i>
+                            </span>
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="d-flex justify-content-between mt-3">
+              <select class="form-select" style="width: auto" name="pageSize" [(ngModel)]="service.pageSize">
+                <option [ngValue]="2">2 items per page</option>
+                <option [ngValue]="4">4 items per page</option>
+                <option [ngValue]="6">6 items per page</option>
+              </select>
+              <ngb-pagination class="ms-3" [collectionSize]="(total$ | async)!" [(page)]="service.page"
+                [pageSize]="service.pageSize"></ngb-pagination>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para crear un logro -->
+<ng-template #createModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Registrar logro</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <div class="card">
+      <div class="card-body">
+        <form class="needs-validation" novalidate [ngClass]="{ 'was-validated': validate }">
+          <div class="row g-3">
+            <div class="col-md-12">
+              <label class="form-label" for="createJoven">Joven<span class="red-asterisk">*</span></label>
+              <ng-select
+                [items]="jovenes"
+                bindLabel="nombre"
+                bindValue="id"
+                placeholder="Seleccione un joven"
+                [(ngModel)]="newLogro.jovenid"
+                required
+                [ngClass]="{ 'is-invalid': errorMessages?.jovenid }"
+              >
+              <ng-template ng-label-tmp let-item="item">
+                {{ item.nombre }} {{ item.apellido }} {{ item.celular }}
+              </ng-template>
+              <ng-template ng-option-tmp let-item="item">
+                {{ item.nombre }} {{ item.apellido }} {{ item.celular }}
+              </ng-template>
+              </ng-select>
+              <div *ngIf="errorMessages?.jovenid" class="invalid-feedback">
+                {{ errorMessages.jovenid }}
+              </div>
+            </div>
+          </div>
+          
+          <div class="row g-3">
+            <div class="col-md-12">
+              <label class="form-label" for="createDescripcion">Descripción<span class="red-asterisk">*</span></label>
+              <textarea class="form-control" id="createDescripcion" rows="3" placeholder="Descripción"
+                [(ngModel)]="newLogro.descripcion" name="descripcion" required [ngClass]="{ 'is-invalid': errorMessages?.descripcion }"></textarea>
+              <div *ngIf="errorMessages?.descripcion" class="invalid-feedback">
+                {{ errorMessages.descripcion }}
+              </div>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">    
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">Cancelar</button>
+    <button class="btn btn-primary" type="button" (click)="createLogro()">Registrar</button>
+  </div>
+</ng-template>
+
+<!-- Modal para editar un logro -->
+<ng-template #content1 let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Editar logro</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <div class="card">
+      <div class="card-body">
+        <form class="needs-validation" novalidate [ngClass]="{ 'was-validated': validate }">
+          <div class="row g-3">
+            <div class="col-md-12">
+              <label class="form-label" for="editJoven">Joven<span class="red-asterisk">*</span></label>
+              <ng-select 
+              [items]="jovenes"
+              bindLabel="nombre"
+              [ngModel]="selectedLogro.jovenid"
+              (ngModelChange)="onJovenChange($event)"
+              placeholder="Seleccione un joven"
+              [loading]="loading"
+              [searchable]="true"
+              [clearable]="true"
+              [virtualScroll]="true"
+              [class.is-invalid]="errorMessages?.jovenid"
+              >
+        
+              <ng-template ng-label-tmp let-item="item">
+                {{ item.correo }}
+              </ng-template>
+              <ng-template ng-option-tmp let-item="item">
+                {{ item.correo }}
+              </ng-template>
+            </ng-select>
+            
+              <div *ngIf="errorMessages?.jovenid" class="invalid-feedback">
+                {{ errorMessages.jovenid }}
+              </div>
+            </div>
+          </div>
+          
+          
+          
+          <div class="row g-3">
+            <div class="col-md-12">
+              <label class="form-label" for="editDescripcion">Descripción<span class="red-asterisk">*</span></label>
+              <textarea class="form-control" id="editDescripcion" rows="3" placeholder="Descripción"
+                [(ngModel)]="selectedLogro.descripcion" name="descripcion" required [ngClass]="{ 'is-invalid': errorMessages?.descripcion }"></textarea>
+              <div *ngIf="errorMessages?.descripcion" class="invalid-feedback">
+                {{ errorMessages.descripcion }}
+              </div>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">Cancelar</button>
+    <button class="btn btn-primary" type="button" (click)="editLogro()">Actualizar</button>
+  </div>
+</ng-template>

@@ -1,0 +1,225 @@
+<div class="container-fluid p-0">
+  <div class="row">
+    <div class="col-12">
+      <div class="login-card">
+        <div>
+          <div>
+            <a class="logo" routerLink="/">
+              <img class="img-fluid for-light" src="assets/images/logo/logo.png" alt="loginpage">
+              <img class="img-fluid for-dark" src="assets/images/logo/logo_dark.png" alt="loginpage">
+            </a>
+          </div>
+
+          <div class="login-main">
+            <form class="theme-form needs-validation" novalidate [ngClass]="{ 'was-validated': validate }">
+              <h4>Crea tu cuenta</h4>
+              <p>Ingresa detalladamente tu información personal</p>
+
+
+              <!-- Sección 1: Información Personal -->
+              <div *ngIf="currentSection === 0" class="form-group">
+                <label class="col-form-label pt-0">Tu información<span class="red-asterisk">*</span></label>
+                <div class="row g-3 mb-4">
+                  <div class="col-md-6">
+                    <input class="form-control" type="text" required placeholder="Nombre(s)" 
+                      [(ngModel)]="newjoven.nombre" [(ngModel)]="selectedjoven.nombre" [ngClass]="{ 'is-invalid': errorMessages?.nombre }" name="nombre">
+                    <div *ngIf="errorMessages?.nombre" class="invalid-feedback">
+                      {{ errorMessages.nombre }}
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <input class="form-control" type="text" required placeholder="Apellido(s)"
+                      [(ngModel)]="newjoven.apellido" [(ngModel)]="selectedjoven.apellido" [ngClass]="{ 'is-invalid': errorMessages?.apellido }" name="apellido">
+                    <div *ngIf="errorMessages?.apellido" class="invalid-feedback">
+                      {{ errorMessages.apellido }}
+                    </div>
+                  </div>
+                </div>
+                <div class="row g-3 mb-4">
+                  <div class="col-md-6">
+                    <select class="form-control" required [(ngModel)]="newjoven.tipoDocumentoid" [(ngModel)]="selectedjoven.tipoDocumentoid"
+                      [ngClass]="{ 'is-invalid': errorMessages?.tipoDocumentoid }" name="tipoDocumentoid">
+                      <option value="0" disabled selected>Tipo de documento</option>
+                      <option *ngFor="let tipo of tiposDocumentos" [ngValue]="tipo.id">{{ tipo.siglas }}</option>
+                    </select>
+                    <div *ngIf="errorMessages?.tipoDocumentoid" class="invalid-feedback">
+                      {{ errorMessages.tipoDocumentoid }}
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <input class="form-control" type="number" required placeholder="Número de documento"
+                      [(ngModel)]="newjoven.documento" [(ngModel)]="selectedjoven.documento" [ngClass]="{ 'is-invalid': errorMessages?.documento }" name="documento">
+                    <div *ngIf="errorMessages?.documento" class="invalid-feedback">
+                      {{ errorMessages.documento }}
+                    </div>
+                  </div>
+
+                </div>
+                <div class="row g-3 mb-4">
+                  <div class="col-md-6">
+                    <input class="form-control" type="date" required [(ngModel)]="newjoven.fechaNacimiento" [(ngModel)]="selectedjoven.fechaNacimiento"
+                      placeholder="Fecha de nacimiento" [ngClass]="{ 'is-invalid': errorMessages?.fechaNacimiento }" name="fechaNacimiento">
+                    <div *ngIf="errorMessages?.fechaNacimiento" class="invalid-feedback">
+                      {{ errorMessages.fechaNacimiento }}
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <input class="form-control" type="number" required placeholder="Celular"
+                      [(ngModel)]="newjoven.numeroContacto" [(ngModel)]="selectedjoven.numeroContacto" [ngClass]="{ 'is-invalid': errorMessages?.numeroContacto }" name="numeroContacto">
+                    <div *ngIf="errorMessages?.numeroContacto" class="invalid-feedback">
+                      {{ errorMessages.numeroContacto }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sección 2: Información Académica -->
+              <div *ngIf="currentSection === 1" class="form-group">
+                <label class="col-form-label pt-0">Tu información académica<span class="red-asterisk">*</span></label>
+                <div class="row g-3 mb-4">
+                  <div class="col-md-6">
+                    <select class="form-control" required [(ngModel)]="newjoven.tipo_institucion"  [(ngModel)]="selectedjoven.tipo_institucion" 
+                      [ngClass]="{ 'is-invalid': errorMessages?.tipo_institucion }" name="tipo_institucion">
+                      <option value="" disabled selected>Selecciona una institución</option>
+                      <option>Escuela</option>
+                      <option>Colegio</option>
+                      <option>Tecnológico</option>
+                      <option>Universidad</option>
+                    </select>
+                    <div *ngIf="errorMessages?.tipo_institucion" class="invalid-feedback">
+                      {{ errorMessages.tipo_institucion }}
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <ng-select placeholder="Escoge una institución" [items]="instituciones" bindLabel="nombre"
+                      bindValue="nombre" [(ngModel)]="newjoven.institucion" [loading]="loading" [searchable]="true"
+                      [clearable]="true" [virtualScroll]="true" [class.is-invalid]="errorMessages?.institucion">
+
+                      <ng-template ng-label-tmp let-item="item">
+                        {{ item.nombre }}
+                      </ng-template>
+                      <ng-template ng-option-tmp let-item="item">
+                        {{ item.nombre }}
+                      </ng-template>
+                    </ng-select>
+
+                    <div *ngIf="errorMessages?.nombre" class="invalid-feedback">
+                      {{ errorMessages.nombre }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sección 3: Sobre Ti -->
+              <div *ngIf="currentSection === 2" class="form-group">
+                <label class="col-form-label pt-0">Sobre ti<span class="red-asterisk">*</span></label>
+                <div class="row g-3 mb-4">
+
+                <textarea class="form-control" rows="3" placeholder="Cuéntame sobre tus habilidades" required
+                  [(ngModel)]="newjoven.habilidades"
+                  [ngClass]="{ 'is-invalid': errorMessages?.habilidades }" name="habilidades"></textarea>
+                <div *ngIf="errorMessages?.habilidades" class="invalid-feedback">
+                  {{ errorMessages.habilidades }}
+                </div>
+                </div>
+                <div class="row g-3 mb-4">
+                  <div class="col-12">
+                    <textarea class="form-control" rows="3"
+                      placeholder="Cuales son tus características más significativas" required
+                      [(ngModel)]="newjoven.caracteristicas"
+                      [ngClass]="{ 'is-invalid': errorMessages?.caracteristicas }" name="caracteristicas"></textarea>
+                    <div *ngIf="errorMessages?.caracteristicas" class="invalid-feedback">
+                      {{ errorMessages.caracteristicas }}
+                    </div>
+                  </div>
+                </div>
+                <div class="row g-3 mb-4">
+                  <div class="col-12">
+                    <textarea class="form-control" rows="3" placeholder="Describete aquí" required
+                      [(ngModel)]="newjoven.descripcion"
+                      [ngClass]="{ 'is-invalid': errorMessages?.descripcion }" name="descripcion"></textarea>
+                    <div *ngIf="errorMessages?.descripcion" class="invalid-feedback">
+                      {{ errorMessages.descripcion }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sección 4: Contraseña -->
+              <div *ngIf="currentSection === 3" class="form-group">
+                <label class="col-form-label">Tu cuenta<span class="red-asterisk">*</span></label>
+                <input class="form-control" type="email" required placeholder="Correo" [(ngModel)]="newjoven.correo" [ngClass]="{ 'is-invalid': errorMessages?.correo }" >
+                <div *ngIf="errorMessages?.correo" class="invalid-feedback">
+                  {{ errorMessages.correo }}
+                </div>
+                <label class="col-form-label"></label>
+
+
+
+                <div class="password-container">
+                  <input class="form-control" [type]="show ? 'text' : 'password'" [(ngModel)]="newjoven.contrasena" [ngClass]="{ 'is-invalid': errorMessages?.contrasena }" name="contrasena" required="" placeholder="Contraseña">
+                  <span class="password-toggle" (click)="showPassword()">
+                      <ng-container *ngIf="!show">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                              <circle cx="12" cy="12" r="3"></circle>
+                          </svg>
+                      </ng-container>
+                      <ng-container *ngIf="show">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                              <line x1="1" y1="1" x2="23" y2="23"></line>
+                          </svg>
+                      </ng-container>
+                  </span>
+              </div>
+                <label></label>
+
+
+                <div class="form-group">
+                  <input class="form-control" [type]="show ? 'text' : 'password'" required
+                    placeholder="Confirmar contraseña" [(ngModel)]="confirmContrasena"
+                    [ngClass]="{ 'is-invalid': errorMessages?.confirmContrasena }" name="confirmContrasena">
+                  <div class="invalid-feedback">
+                    las contraseñas no coinciden
+                  </div>
+                </div>
+
+              </div>
+
+
+
+              <!-- Indicadores de carrusel -->
+              <div class="carousel-controls text-center">
+                <button (click)="previousSection()" [disabled]="currentSection === 0" class="btn-arrow">
+                  < </button>
+                    <div class="dots">
+                      <span *ngFor="let section of sections; let i = index" [class.active]="i === currentSection"
+                        (click)="goToSection(i)">
+                      </span>
+                    </div>
+                    <button (click)="nextSection()" [disabled]="currentSection === totalSections - 1" class="btn-arrow">
+                      >
+                    </button>
+              </div>
+              <!-- Botón de enviar en la última sección -->
+              <div *ngIf="currentSection === totalSections - 1" class="form-group mb-0">
+                <label class="col-form-label"></label>
+                <label class="col-form-label"></label>
+                <button class="btn btn-primary d-block w-100" (click)="register()">Registrarme</button>
+              </div>
+
+              <p class="mt-4 mb-0">¿Ya tienes cuenta?
+                <a class="ms-2" routerLink="/auth/login">Inicia sesión</a>
+              </p>
+            </form>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

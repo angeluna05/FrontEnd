@@ -1,0 +1,82 @@
+.action-icons {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .action-icons li {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .action-icons a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .icon-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+  
+  .icon-circle i {
+    color: #000;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Colores específicos para cada acción */
+  .edit .icon-circle {
+    background-color: #ffeeba;
+  }
+  
+  .delete .icon-circle {
+    background-color: #f8d7da;
+  }
+  
+  .status .icon-circle {
+    background-color: #d4edda;
+  }
+  
+  .download .icon-circle {
+    background-color: #ffc977;
+  }
+  .red-asterisk {
+    color: red;
+  }
+  /* Efecto hover */
+  .action-icons a:hover .icon-circle {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  
+  /* Ajuste específico para el icono de lectura */
+  li.status:last-child .icon-circle {
+    background-color: #cce5ff;
+  }
+  
+  /* Asegura que el contenedor padre tenga suficiente espacio */
+  td {
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .action {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }

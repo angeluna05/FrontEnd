@@ -1,0 +1,168 @@
+.config-popup {
+    display: block;
+    border-bottom: none;
+}
+
+.mobile-help-container {
+    width: 100%;
+    max-width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  .help-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .help-content-wrapper.mobile-view {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .help-modules-list.mobile-modules {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    z-index: 1000;
+    overflow-y: auto;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .help-modules-list.mobile-modules.show-modules {
+    transform: translateX(0);
+  }
+
+  .help-modules-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .help-modules-list li {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .help-modules-list li.active {
+    background-color: #f0f0f0;
+  }
+
+  .help-content.mobile-content {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    z-index: 1001;
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .help-content.mobile-content.show-content {
+    transform: translateX(0);
+  }
+
+  .mobile-back-header {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .help-details {
+    padding: 15px;
+  }
+
+  .help-actions {
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .module-toggle-btn, .download-btn {
+    width: 100%;
+    max-width: 250px;
+  }
+
+.help-customizer {
+    width: 100%;
+    height: 100vh;
+    max-width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .scrollable-content {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+
+  .help-text {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+  }
+
+  .help-text img {
+    max-width: 100% !important;
+    height: auto !important;
+    display: block;
+    margin: 10px auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    cursor: zoom-in;
+  }
+
+  .help-text img.full-width {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .help-text img.zoomable {
+    transition: transform 0.3s ease;
+  }
+
+  .help-text img.zoomable:hover {
+    transform: scale(1.5);
+    z-index: 1000;
+    position: relative;
+  }
+
+  .image-container {
+    max-width: 100%;
+    overflow-x: auto;
+    display: flex;
+    justify-content: center;
+  }
+
+  .image-container img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  @media (max-width: 768px) {
+    .scrollable-content {
+      max-height: calc(100vh - 150px);
+    }
+
+    .help-text img {
+      max-width: calc(100vw - 40px) !important;
+      margin: 10px auto;
+    }
+  }
+/* Archivo CSS del componente (por ejemplo, documentacion.component.css) */
+.modal-dialog {
+  max-width: 80%; /* Ajusta el ancho al 80% del viewport */
+  width: auto;    /* Permite al contenido ocupar más espacio */
+}

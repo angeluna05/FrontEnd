@@ -1,0 +1,198 @@
+// General Table Styles
+.celula-table {
+  width: 95%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: #333;
+}
+
+.celula-table thead {
+  background-color: #f8f9fa;
+}
+.red-asterisk {
+  color: red;
+}            m
+.celula-table th {
+  padding: 0.75rem;
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+  font-weight: bold;
+  color: #7366ff;
+}
+
+.celula-table th:hover {
+  background-color: #e9ecef;
+}
+
+.celula-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.celula-table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+// Icon Arrow Styles
+.icon-arrow {
+  margin-left: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.icon-arrow.active {
+  color: #007bff;
+}
+
+.icon-arrow.asc::before {
+  content: '▲';
+}
+
+.icon-arrow.desc::before {
+  content: '▼';
+}
+
+// Button Styles
+.delete-button {
+  background-color: #ff0000;
+  color: #fff;
+  border: none;
+  border-radius: 0.25rem;
+  padding: 0.375rem 0.75rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s ease;
+}
+
+.delete-button:hover {
+  background-color: #b30000;
+}
+
+.delete-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(255, 38, 38, 0.5);
+}
+.edit-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 0.25rem;
+  padding: 0.375rem 0.75rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s ease;
+}
+
+.edit-button:hover {
+  background-color: #0056b3;
+}
+
+.delete-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5);
+}
+
+// Search Input Styles
+.search-container {
+  width: 35%;
+  margin: 0;
+  border: none;
+  border-radius: 9.5rem; // Ajusta el valor según el radio que desees
+  overflow: hidden;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 0.25rem;
+  transition: border-color 0.2s ease;
+}
+
+.search-input:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+}
+.action-icons {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
+
+.action-icons li {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.action-icons a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.icon-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.icon-circle i {
+  color: #000;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Colores específicos para cada acción */
+.edit .icon-circle {
+  background-color: #ffeeba;
+}
+
+.delete .icon-circle {
+  background-color: #f8d7da;
+}
+
+.status .icon-circle {
+  background-color: #d4edda;
+}
+
+.download .icon-circle {
+  background-color: #ffc977;
+}
+
+/* Efecto hover */
+.action-icons a:hover .icon-circle {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Ajuste específico para el icono de lectura */
+li.status:last-child .icon-circle {
+  background-color: #cce5ff;
+}
+
+/* Asegura que el contenedor padre tenga suficiente espacio */
+td {
+  padding: 10px;
+  text-align: center;
+}
+
+.action {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

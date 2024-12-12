@@ -1,0 +1,465 @@
+<app-breadcrumb [title]="'Jovenes'" [items]="['Apps']" [active_item]="'Jovenes'"></app-breadcrumb>
+
+<!-- Container-fluid starts -->
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5>Jóvenes</h5>
+          <div class="media-body text-end">
+            <ul class="action-icons">
+
+              <li class="download">
+                <a (click)="download()" class="btn btn-pill">
+                  <span class="icon-circle">
+                    <i class="fa fa-download"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card-body custom-datatable noscroll">
+          <div class="custom-datatable table-responsive">
+            <div class="file-content">
+              <div class="card-header">
+                <div class="media">
+                  <form class="form-inline" action="#" method="get">
+                    <div class="form-group mb-0 text-end">
+                      <i class="fa fa-search"></i>
+                      <input class="form-control-plaintext" type="text" placeholder="Buscar..." [(ngModel)]="searchTerm"
+                        (input)="onSearchTermChange()" />
+                    </div>
+                  </form>
+                  <div class="media-body text-end">
+                    <button class="btn btn-pill btn-primary" type="button" (click)="Crear(createModal)">Registrar
+                      Joven</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col" sortable="nombre" (sort)="onSort($event)">Nombre</th>
+                  <th scope="col" sortable="apellido" (sort)="onSort($event)">Apellido</th>
+                  <th scope="col" sortable="correo" (sort)="onSort($event)">Correo</th>
+                  <th scope="col" sortable="numeroContacto" (sort)="onSort($event)">Número de contacto</th>
+                  <th scope="col" sortable="tipoDocumentoid.siglas" (sort)="onSort($event)">Tipo Documento</th>
+                  <th scope="col" sortable="estadoid.nombre" (sort)="onSort($event)">Estado</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of tableItem$ | async">
+                  <td>
+                    <ngb-highlight [result]="item.nombre" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="item.apellido" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="item.correo" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="item.numeroContacto" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="item.tipoDocumentoid.siglas" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="item.estadoid.nombre" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <div class="action">
+                      <ul class="action-icons">
+                        <li class="delete">
+                          <a (click)="perfil(item)">
+                            <span class="icon-circle">
+                              <i class="fa fa-user"></i>
+                            </span>
+                          </a>
+                        </li>
+                        <li class="edit">
+                          <a (click)="Editar(content1, item)">
+                            <span class="icon-circle">
+                              <i class="fa fa-pencil-square-o"></i>
+                            </span>
+                          </a>
+                        </li>
+                        <li class="status">
+                          <a (click)="withConfirmation(item)">
+                            <span class="icon-circle">
+                              <i class="icofont icofont-retweet"></i>
+                            </span>
+                          </a>
+                        </li>
+
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="d-flex justify-content-between mt-3">
+              <select class="form-select" style="width: auto" name="pageSize" [(ngModel)]="service.pageSize">
+                <option [ngValue]="2">2 items por página</option>
+                <option [ngValue]="4">4 items por página</option>
+                <option [ngValue]="6">6 items por página</option>
+              </select>
+              <ngb-pagination class="ms-3" [collectionSize]="(total$ | async)!" [(page)]="service.page"
+                [pageSize]="service.pageSize"></ngb-pagination>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #createModal let-modal>
+
+  <div class="card">
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Registrar Joven</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+      <div class="card">
+        <div class="card-body">
+          <form class="needs-validation" novalidate [ngClass]="{ 'was-validated': validate }">
+            <div class="row g-3">
+
+
+              <!-- Campo Nombre -->
+              <div class="col-md-6">
+                <label class="form-label" for="createNombre">Nombre<span class="red-asterisk">*</span></label>
+                <input class="form-control" id="createNombre" type="text" placeholder="Nombre"
+                  [(ngModel)]="newjoven.nombre" name="nombre" required />
+                <div *ngIf="errorMessages?.nombre" class="invalid-feedback">
+                  {{ errorMessages.nombre }}
+                </div>
+              </div>
+              <!-- Campo Apellido -->
+              <div class="col-md-6">
+                <label class="form-label" for="createApellido">Apellido<span class="red-asterisk">*</span></label>
+                <input class="form-control" id="createApellido" type="text" placeholder="Apellido"
+                  [(ngModel)]="newjoven.apellido" name="apellido" required />
+                <div *ngIf="errorMessages?.apellido" class="invalid-feedback">
+                  {{ errorMessages.apellido }}
+                </div>
+              </div>
+            </div>
+            <div class="row g-3">
+              <!-- Campo Tipo de Documento -->
+              <div class="col-md-6">
+                <label class="form-label" for="createTipoDocumento">Tipo de Documento<span class="red-asterisk">*</span></label>
+                <select class="form-select" id="createTipoDocumento" [(ngModel)]="newjoven.tipoDocumentoid"
+                  name="tipoDocumentoid" required>
+                  <option selected disabled value="">Escoge una opción</option>
+                  <option *ngFor="let tipo of tiposDocumentos" [ngValue]="tipo">{{ tipo.siglas }}</option>
+                </select>
+                <div class="invalid-feedback">Por favor, selecciona un Tipo de documento válido.</div>
+
+              </div>
+              <!-- Campo Documento -->
+              <div class="col-md-6">
+                <label class="form-label" for="createDocumento">Documento<span class="red-asterisk">*</span></label>
+                <input class="form-control" id="createDocumento" type="number" placeholder="Documento"
+                  [(ngModel)]="newjoven.documento" name="documento" />
+                <div *ngIf="errorMessages?.documento" class="invalid-feedback">
+                  {{ errorMessages.documento }}
+                </div>
+              </div>
+
+            </div>
+            <div class="row g-3">
+              <!-- Campo Fecha de Nacimiento -->
+              <div class="col-md-6">
+                <label class="form-label" for="createFechaNacimiento">Fecha de nacimiento<span class="red-asterisk">*</span></label>
+                <input class="form-control" id="createFechaNacimiento" type="date" placeholder="Fecha de nacimiento"
+                  [(ngModel)]="newjoven.fechaNacimiento" name="fechaNacimiento" required />
+                  <div class="invalid-feedback">Por favor, selecciona una fecha válido.</div>
+
+              </div>
+              <!-- Campo Número de Contacto -->
+              <div class="col-md-6">
+                <label class="form-label" for="createNumeroContacto">Número de contacto<span class="red-asterisk">*</span></label>
+                <input class="form-control" id="createNumeroContacto" type="text" placeholder="Número de contacto"
+                  [(ngModel)]="newjoven.numeroContacto" name="numeroContacto" required />
+                <div *ngIf="errorMessages?.numeroContacto" class="invalid-feedback">
+                  {{ errorMessages.numeroContacto }}
+                </div>
+              </div>
+
+
+            </div>
+            <div class="row g-3">
+              <!-- Campo Correo -->
+              <div class="col-md-12">
+                <label class="form-label" for="createCorreo">Correo<span class="red-asterisk">*</span></label>
+                <input class="form-control" id="createCorreo" type="email" placeholder="Correo"
+                  [(ngModel)]="newjoven.correo" name="correo" required />
+                <div *ngIf="errorMessages?.correo" class="invalid-feedback">
+                  {{ errorMessages.correo }}
+                </div>
+              </div>
+            </div>
+            <div class="row g-3">
+
+              <div class="col-md-6">
+                <label class="form-label" for="createTipoDocumento">Tipo de institución<span class="red-asterisk">*</span></label>
+                <select class="form-control" id="createTipoDocumento" [(ngModel)]="newjoven.tipo_institucion"
+                  name="tipoDocumentoid" required>
+                  <option selected disabled value="">Escoge una opción</option>
+                  <option>Escuela</option>
+                  <option>Colegio</option>
+                  <option>Tecnológico</option>
+                  <option>Universidad</option>
+                </select>
+                <div *ngIf="errorMessages?.tipo_institucion" class="invalid-feedback">
+                  {{ errorMessages.tipo_institucion }}
+                </div>
+              </div>
+              <!-- Campo institución -->
+              <div class="col-md-6">
+                <label class="form-label" for="createinstitución">Institución<span class="red-asterisk">*</span></label>
+                <ng-select [items]="instituciones" bindLabel="nombre" bindValue="nombre" [(ngModel)]="newjoven.institucion"
+                  placeholder="Escoge una institución" [loading]="loading" [searchable]="true" [clearable]="true"
+                  [virtualScroll]="true" [class.is-invalid]="errorMessages?.institucion" >
+
+                  <ng-template ng-label-tmp let-item="item">
+                    {{ item.nombre }}
+                  </ng-template>
+                  <ng-template ng-option-tmp let-item="item">
+                    {{ item.nombre }}
+                  </ng-template>
+                </ng-select>
+
+                <div *ngIf="errorMessages?.nombre" class="invalid-feedback">
+                  {{ errorMessages.nombre }}
+                </div>
+              </div>
+
+
+            </div>
+            <div class="row g-3">
+              <!-- Campo Habilidades -->
+              <div class="col-md-12">
+                <label class="form-label" for="createHabilidades">Habilidades<span class="red-asterisk">*</span></label>
+                <textarea class="form-control" id="createHabilidades" type="text" placeholder="Habilidades"
+                  [(ngModel)]="newjoven.habilidades" name="habilidades" required></textarea>
+                <div *ngIf="errorMessages?.habilidades" class="invalid-feedback">
+                  {{ errorMessages.habilidades }}
+                </div>
+              </div>
+            </div>
+            <div class="row g-3">
+              <!-- Campo Características -->
+              <div class="col-md-12">
+                <label class="form-label" for="createCaracteristicas">Características<span class="red-asterisk">*</span></label>
+                <textarea class="form-control" id="createCaracteristicas" type="text" placeholder="Características"
+                  [(ngModel)]="newjoven.caracteristicas" name="caracteristicas" required></textarea>
+                <div *ngIf="errorMessages?.caracteristicas" class="invalid-feedback">
+                  {{ errorMessages.caracteristicas }}
+                </div>
+              </div>
+            </div>
+            <div class="row g-3">
+              <!-- Campo Descripción -->
+              <div class="col-md-12">
+                <label class="form-label" for="createDescripcion">Descripción<span class="red-asterisk">*</span></label>
+                <textarea class="form-control" id="createDescripcion" rows="3" placeholder="Descripción"
+                  [(ngModel)]="newjoven.descripcion" name="descripcion" required></textarea>
+                <div *ngIf="errorMessages?.descripcion" class="invalid-feedback">
+                  {{ errorMessages.descripcion }}
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Cross click')">Cerrar</button>
+        <button type="button" class="btn btn-primary" (click)="createjoven(modal)">Guardar</button>
+      </div>
+
+
+    </div>
+  </div>
+
+
+
+</ng-template>
+<ng-template #content1 let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Editar Jovenes</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <div class="card">
+      <div class="card-body">
+        <form class="needs-validation" novalidate [ngClass]="{ 'was-validated': validate }">
+          <div class="row g-3">
+
+
+            <!-- Campo Nombre -->
+            <div class="col-md-6">
+              <label class="form-label" for="editNombre">Nombre<span class="red-asterisk">*</span></label>
+              <input class="form-control" id="editNombre" type="text" placeholder="Nombre"
+                [(ngModel)]="selectedjoven.nombre" name="nombre" required [ngClass]="{ 'is-invalid': errorMessages?.nombre }"  />
+              <div *ngIf="errorMessages?.nombre" class="invalid-feedback">
+                {{ errorMessages.nombre }}
+              </div>
+            </div>
+            <!-- Campo Apellido -->
+            <div class="col-md-6">
+              <label class="form-label" for="editApellido">Apellido<span class="red-asterisk">*</span></label>
+              <input class="form-control" id="editApellido" type="text" placeholder="Apellido"
+                [(ngModel)]="selectedjoven.apellido" name="apellido" required  [ngClass]="{ 'is-invalid': errorMessages?.apellido }"/>
+              <div *ngIf="errorMessages?.apellido" class="invalid-feedback">
+                {{ errorMessages.apellido }}
+              </div>
+            </div>
+          </div>
+          <div class="row g-3">
+            <!-- Campo Tipo de Documento -->
+            <div class="col-md-6">
+              <label class="form-label" for="editRol">Tipo de documento<span class="red-asterisk">*</span></label>
+              <select class="form-select" id="editRol" [(ngModel)]="selectedjoven.tipoDocumentoid.id" name="rolid"
+                required  [ngClass]="{ 'is-invalid': errorMessages?.tipoDocumentoid }">
+                <option *ngFor="let tipo of tiposDocumentos" [ngValue]="tipo.id">{{ tipo.siglas }}</option>
+              </select>
+              <div class="invalid-feedback">Por favor, selecciona un Tipo de documento válido.</div>
+            </div>
+            <!-- Campo Documento -->
+            <div class="col-md-6">
+              <label class="form-label" for="editDocumento">Documento<span class="red-asterisk">*</span></label>
+              <input class="form-control" id="editDocumento" type="number" placeholder="Documento"
+                [(ngModel)]="selectedjoven.documento" name="documento" required  [ngClass]="{ 'is-invalid': errorMessages?.documento }" />
+              <div *ngIf="errorMessages?.documento" class="invalid-feedback">
+                {{ errorMessages.documento }}
+              </div>
+            </div>
+          </div>
+          <div class="row g-3">
+            <!-- Campo Número de Contacto -->
+            <div class="col-md-6">
+              <label class="form-label" for="editNumeroContacto">Número de contacto<span
+                  class="red-asterisk">*</span></label>
+              <input class="form-control" id="editNumeroContacto" type="text" placeholder="Número de contacto"
+                [(ngModel)]="selectedjoven.numeroContacto" name="numeroContacto" required [ngClass]="{ 'is-invalid': errorMessages?.numeroContacto }" />
+              <div *ngIf="errorMessages?.numeroContacto" class="invalid-feedback">
+                {{ errorMessages.numeroContacto }}
+              </div>
+            </div>
+            <!-- Campo Fecha de Nacimiento -->
+            <div class="col-md-6">
+              <label class="form-label" for="editFechaNacimiento">Fecha de nacimiento<span
+                  class="red-asterisk">*</span></label>
+              <input class="form-control" id="editFechaNacimiento" type="date" placeholder="Fecha de nacimiento"
+                [(ngModel)]="selectedjoven.fechaNacimiento" name="fechaNacimiento" required  [ngClass]="{ 'is-invalid': errorMessages?.fechaNacimiento }"/>
+              <div *ngIf="errorMessages?.fechaNacimiento" class="invalid-feedback">
+                {{ errorMessages.fechaNacimiento }}
+              </div>
+            </div>
+          </div>
+          <div class="row g-3">
+            <!-- Campo Correo -->
+            <div class="col-md-12">
+              <label class="form-label" for="editCorreo">Correo<span class="red-asterisk">*</span></label>
+              <input class="form-control" id="editCorreo" type="email" placeholder="Correo"
+                [(ngModel)]="selectedjoven.correo" name="correo" required  [ngClass]="{ 'is-invalid': errorMessages?.correo }"/>
+              <div *ngIf="errorMessages?.correo" class="invalid-feedback">
+                {{ errorMessages.correo }}
+              </div>
+            </div>
+          </div>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="editTipoDocumento">Tipo de institución<span
+                  class="red-asterisk">*</span></label>
+              <select class="form-control" id="editTipoDocumento" [(ngModel)]="selectedjoven.tipo_institucion"
+                name="tipoDocumentoid" required [ngClass]="{ 'is-invalid': errorMessages?.tipo_institucion }">
+                <!-- Opciones disponibles -->
+                <option selected disabled value="">Escoge una opción<span class="red-asterisk">*</span></option>
+                <option value="Escuela">Escuela</option>
+                <option value="Colegio">Colegio </option>
+                <option value="Tecnológico">Tecnológico</option>
+                <option value="Universidad">Universidad</option>
+              </select>
+              <div *ngIf="errorMessages?.tipo_institucion" class="invalid-feedback">
+                {{ errorMessages.tipo_institucion }}
+              </div>
+            </div>
+
+            <!-- Campo Institución -->
+            <div class="col-md-6">
+              <label class="form-label" for="editJoven">Institución<span class="red-asterisk">*</span></label>
+              <ng-select [items]="instituciones" bindLabel="nombre" bindValue="nombre"
+                [(ngModel)]="selectedjoven.institucion" placeholder="Escoge una institución" [loading]="loading"
+                [searchable]="true" [clearable]="true" [virtualScroll]="true"
+                [class.is-invalid]="errorMessages?.institucion"  [ngClass]="{ 'is-invalid': errorMessages?.institucion }">
+
+                <ng-template ng-label-tmp let-item="item">
+                  {{ item.nombre }}
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item">
+                  {{ item.nombre }}
+                </ng-template>
+              </ng-select>
+
+              <div *ngIf="errorMessages?.institucion" class="invalid-feedback">
+                {{ errorMessages.institucion }}
+              </div>
+            </div>
+          </div>
+          <div class="row g-3">
+            <!-- Campo Habilidades -->
+            <div class="col-md-12">
+              <label class="form-label" for="editHabilidades">Habilidades<span class="red-asterisk">*</span></label>
+              <textarea class="form-control" id="editHabilidades" type="text" placeholder="Habilidades"
+                [(ngModel)]="selectedjoven.habilidades" name="habilidades" required [ngClass]="{ 'is-invalid': errorMessages?.habilidades }"></textarea>
+              <div *ngIf="errorMessages?.habilidades" class="invalid-feedback">
+                {{ errorMessages.habilidades }}
+              </div>
+            </div>
+          </div>
+          <div class="row g-3">
+            <!-- Campo Características -->
+            <div class="col-md-12">
+              <label class="form-label" for="editCaracteristicas">Características<span
+                  class="red-asterisk">*</span></label>
+              <textarea class="form-control" id="editCaracteristicas" type="text" placeholder="Características"
+                [(ngModel)]="selectedjoven.caracteristicas" name="caracteristicas" required [ngClass]="{ 'is-invalid': errorMessages?.caracteristicas }"> </textarea>
+              <div *ngIf="errorMessages?.caracteristicas" class="invalid-feedback">
+                {{ errorMessages.caracteristicas }}
+              </div>
+            </div>
+          </div>
+          <div class="row g-3">
+            <!-- Campo Descripción -->
+            <div class="col-md-12">
+              <label class="form-label" for="editDescripcion">Descripción<span class="red-asterisk">*</span></label>
+              <textarea class="form-control" id="editDescripcion" rows="3" placeholder="Descripción"
+                [(ngModel)]="selectedjoven.descripcion" name="descripcion" required [ngClass]="{ 'is-invalid': errorMessages?.descripcion }"></textarea>
+              <div *ngIf="errorMessages?.descripcion" class="invalid-feedback">
+                {{ errorMessages.descripcion }}
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Cross click')">Cerrar</button>
+      <button type="button" class="btn btn-primary" (click)="editjoven(modal)">Guardar</button>
+    </div>
+
+
+  </div>
+</ng-template>

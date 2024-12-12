@@ -1,0 +1,48 @@
+<app-breadcrumb [title]="''" [items]="['Dashboard']" [active_item]="'Default'"></app-breadcrumb>
+<div class="container-fluid">
+  
+  <div class="row widget-grid">
+    <div class="col-xxl-4 col-sm-6 box-col-6">
+      <app-welcome></app-welcome>
+    </div>
+    <div class="col-xxl-4 col-md-6 box-col-6 col-ed-6">
+      <div class="row">
+        <div class="col-xl-12">
+          <app-total-users></app-total-users>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="col-xxl-auto col-xl-3 col-sm-6 box-col-6">
+      <div class="row">
+        <div class="col-xl-12">
+          <app-product-status-chart-box [data]="purchase"></app-product-status-chart-box>
+          <div class="col-xl-12">
+          <app-product-status-chart-box [data]="sales"></app-product-status-chart-box>
+          </div>
+        </div>
+      </div>
+    </div> -->
+    <!-- <div class="col-xxl-auto col-xl-3 col-sm-6 box-col-6">
+      <div class="row">
+        <div class="col-xl-12">
+          <app-product-status-chart-box [data]="salesReturn"></app-product-status-chart-box>
+          <div class="col-xl-12">
+          <app-product-status-chart-box [data]="purchaseRate"></app-product-status-chart-box>
+          </div>
+        </div>
+      </div>
+    </div> -->
+
+    
+      <div class="col-md-12 box-col-12">
+        <app-monthly-history></app-monthly-history>
+      </div>
+      
+      <div class="col-md-12 box-col-12">
+        <app-order-status></app-order-status>
+      </div>
+      <!-- <div class="col-md-12 box-col-12">
+        <app-chartjs></app-chartjs>
+      </div> -->
+  </div>
+  </div>

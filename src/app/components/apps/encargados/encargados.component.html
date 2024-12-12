@@ -1,0 +1,309 @@
+<app-breadcrumb [title]="'Encargados'" [items]="['Apps']" [active_item]="'Encargados'"></app-breadcrumb>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <h5>Encargados</h5>
+        </div>
+        <div class="card-body custom-datatable noscroll">
+          <div class="custom-datatable table-responsive">
+            <div class="file-content">
+              <div class="card-header">
+                <div class="media">
+                  <form class="form-inline" action="#" method="get">
+                    <div class="form-group mb-0 text-end">
+                      <i class="fa fa-search"></i>
+                      <input class="form-control-plaintext" type="text" placeholder="Buscar..." [(ngModel)]="searchTerm"
+                        (input)="onSearchTermChange()" />
+                    </div>
+                  </form>
+                  <div class="media-body text-end">
+                    <button class="btn btn-pill btn-primary" type="button" (click)="Crear(createModal)">Registrar
+                      encargado</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col" sortable="nombre" (sort)="onSort($event)">Nombre</th>
+                  <th scope="col" sortable="apellido" (sort)="onSort($event)">Apellido</th>
+                  <th scope="col" sortable="numeroContacto" (sort)="onSort($event)">Número de Contacto</th>
+                  <th scope="col" sortable="documento" (sort)="onSort($event)">Documento</th>
+                  <th scope="col" sortable="cargo" (sort)="onSort($event)">Cargo</th>
+                  <th scope="col" sortable="estado.nombre" (sort)="onSort($event)">Estado</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of tableItem$ | async">
+                  <td>
+                    <ngb-highlight [result]="item.nombre" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="item.apellido" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="item.numeroContacto" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="item.documento" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="item.cargo" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="item.estadoid.nombre" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <div class="action">
+                      <ul class="action-icons">
+                        <li class="edit">
+                          <a (click)="Editar(content1, item)">
+                            <span class="icon-circle">
+                              <i class="fa fa-pencil-square-o"></i>
+                            </span>
+                          </a>
+                        </li>
+                        <li class="status">
+                          <a (click)="withConfirmation(item)">
+                            <span class="icon-circle">
+                              <i class="icofont icofont-retweet"></i>
+                            </span>
+                          </a>
+                        </li>
+
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="d-flex justify-content-between mt-3">
+              <select class="form-select" style="width: auto" name="pageSize" [(ngModel)]="service.pageSize">
+                <option [ngValue]="2">2 items per page</option>
+                <option [ngValue]="4">4 items per page</option>
+                <option [ngValue]="6">6 items per page</option>
+              </select>
+              <ngb-pagination class="ms-3" [collectionSize]="(total$ | async)!" [(page)]="service.page"
+                [pageSize]="service.pageSize"></ngb-pagination>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para crear un encargado -->
+<ng-template #createModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Registrar encargado</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <div class="card">
+      <div class="card-body">
+        <form class="needs-validation" novalidate [ngClass]="{ 'was-validated': validate }">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="createNombre">Nombre<span class="red-asterisk">*</span></label>
+              <input class="form-control" id="createNombre" type="text" placeholder="Nombre"
+                [(ngModel)]="newEncargado.nombre" name="nombre" required
+                [ngClass]="{ 'is-invalid': errorMessages?.nombre }" />
+              <div *ngIf="errorMessages?.nombre" class="invalid-feedback">
+                {{ errorMessages.nombre }}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="createApellido">Apellido<span class="red-asterisk">*</span></label>
+              <input class="form-control" id="createApellido" type="text" placeholder="Apellido"
+                [(ngModel)]="newEncargado.apellido" name="apellido" required
+                [ngClass]="{ 'is-invalid': errorMessages?.apellido }" />
+              <div *ngIf="errorMessages?.apellido" class="invalid-feedback">
+                {{ errorMessages.apellido }}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="createTipoDocumento">Tipo de Documento<span class="red-asterisk">*</span></label>
+              <select class="form-select" id="createTipoDocumento" [(ngModel)]="newEncargado.tipoDocumentoid" required>
+                <option selected disabled value="">Escoge una opción</option>
+                <option *ngFor="let tipo of tiposDocumentos" [ngValue]="tipo">{{ tipo.siglas }}</option>
+              </select>
+              <div class="invalid-feedback">Por favor, selecciona un Tipo de documento válido.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label" for="createDocumento">Documento<span class="red-asterisk">*</span></label>
+              <input class="form-control" id="createDocumento" type="number" placeholder="Documento"
+                [(ngModel)]="newEncargado.documento" name="documento" required
+                [ngClass]="{ 'is-invalid': errorMessages?.documento }" />
+              <div *ngIf="errorMessages?.documento" class="invalid-feedback">
+                {{ errorMessages.documento }}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="createFechaNacimiento">Fecha de Nacimiento<span class="red-asterisk">*</span></label>
+              <input class="form-control" id="createFechaNacimiento" type="date" placeholder="Fecha de Nacimiento"
+                [(ngModel)]="newEncargado.fechaNacimiento" name="fechaNacimiento" required
+                [ngClass]="{ 'is-invalid': errorMessages?.fechaNacimiento }" />
+              <div *ngIf="errorMessages?.fechaNacimiento" class="invalid-feedback">
+                {{ errorMessages.fechaNacimiento }}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="createNumeroContacto">Número de Contacto<span class="red-asterisk">*</span></label>
+              <input class="form-control" id="createNumeroContacto" type="number" placeholder="Número de Contacto"
+                [(ngModel)]="newEncargado.numeroContacto" name="numeroContacto" required
+                [ngClass]="{ 'is-invalid': errorMessages?.numeroContacto }" />
+              <div *ngIf="errorMessages?.numeroContacto" class="invalid-feedback">
+                {{ errorMessages.numeroContacto }}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="createCargo">Cargo<span class="red-asterisk">*</span></label>
+              <input class="form-control" id="createCargo" type="text" placeholder="Cargo"
+                [(ngModel)]="newEncargado.cargo" name="cargo" required
+                [ngClass]="{ 'is-invalid': errorMessages?.cargo }" />
+              <div *ngIf="errorMessages?.cargo" class="invalid-feedback">
+                {{ errorMessages.cargo }}
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label" for="createEmpresa">Empresa<span class="red-asterisk">*</span></label>
+              <select class="form-select" id="createEmpresa" [(ngModel)]="newEncargado.empresaid" name="empresaid"
+                required [ngClass]="{ 'is-invalid': errorMessages?.empresaid }">
+                <option *ngFor="let empresa of empresas" [ngValue]="empresa">{{ empresa.nombre }}</option>
+              </select>
+              <div class="invalid-feedback">Por favor, selecciona una Empresa válida.</div>
+
+            </div>
+
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.close()">Cancelar</button>
+    <button type="button" class="btn btn-primary" (click)="createEncargado()">Guardar</button>
+  </div>
+</ng-template>
+<!-- Modal para editar un encargado -->
+<ng-template #content1 let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Editar Encargado</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <div class="card">
+      <div class="card-body">
+        <form class="needs-validation" novalidate [ngClass]="{ 'was-validated': validate }">
+          <div class="row g-3">
+            <!-- Nombre -->
+            <div class="col-md-6">
+              <label class="form-label" for="editNombre">Nombre<span class="red-asterisk">*</span></label>
+              <input class="form-control" id="editNombre" type="text" placeholder="Nombre"
+                [(ngModel)]="selectedEncargado.nombre" name="nombre" required
+                [ngClass]="{ 'is-invalid': errorMessages?.nombre }" />
+              <div *ngIf="errorMessages?.nombre" class="invalid-feedback">
+                {{ errorMessages.nombre }}
+              </div>
+            </div>
+
+            <!-- Apellido -->
+            <div class="col-md-6">
+              <label class="form-label" for="editApellido">Apellido<span class="red-asterisk">*</span></label>
+              <input class="form-control" id="editApellido" type="text" placeholder="Apellido"
+                [(ngModel)]="selectedEncargado.apellido" name="apellido" required
+                [ngClass]="{ 'is-invalid': errorMessages?.apellido }" />
+              <div *ngIf="errorMessages?.apellido" class="invalid-feedback">
+                {{ errorMessages.apellido }}
+              </div>
+            </div>
+
+            <!-- Tipo de Documento -->
+            <div class="col-md-6">
+              <label class="form-label" for="editTipoDocumento">Tipo de Documento<span class="red-asterisk">*</span></label>
+              <select class="form-select" id="editTipoDocumento" name="tipoDocumentoid"
+                [(ngModel)]="selectedEncargado.tipoDocumentoid.id" required
+                [ngClass]="{ 'is-invalid': errorMessages?.tipoDocumentoid }">
+                <option value="" selected disable>Escoge una opción</option>
+                <option *ngFor="let tipo of tiposDocumentos" [ngValue]="tipo.id">{{ tipo.siglas }}</option>
+              </select>
+              <div class="invalid-feedback">Por favor, selecciona un Tipo de documento válido.</div>
+            </div>
+
+
+            <!-- Documento -->
+            <div class="col-md-6">
+              <label class="form-label" for="editDocumento">Documento<span class="red-asterisk">*</span></label>
+              <input class="form-control" id="editDocumento" type="number" placeholder="Documento"
+                [(ngModel)]="selectedEncargado.documento" name="documento" required
+                [ngClass]="{ 'is-invalid': errorMessages?.documento }" />
+              <div *ngIf="errorMessages?.documento" class="invalid-feedback">
+                {{ errorMessages.documento }}
+              </div>
+            </div>
+
+            <!-- Fecha de Nacimiento -->
+            <div class="col-md-6">
+              <label class="form-label" for="editFechaNacimiento">Fecha de Nacimiento<span class="red-asterisk">*</span></label>
+              <input class="form-control" id="editFechaNacimiento" type="date" placeholder="Fecha de Nacimiento"
+                [(ngModel)]="selectedEncargado.fechaNacimiento" name="fechaNacimiento" required
+                [ngClass]="{ 'is-invalid': errorMessages?.fechaNacimiento }" />
+              <div *ngIf="errorMessages?.fechaNacimiento" class="invalid-feedback">
+                {{ errorMessages.fechaNacimiento }}
+              </div>
+            </div>
+
+            <!-- Número de Contacto -->
+            <div class="col-md-6">
+              <label class="form-label" for="editNumeroContacto">Número de Contacto<span class="red-asterisk">*</span></label>
+              <input class="form-control" id="editNumeroContacto" type="number" placeholder="Número de Contacto"
+                [(ngModel)]="selectedEncargado.numeroContacto" name="numeroContacto" required
+                [ngClass]="{ 'is-invalid': errorMessages?.numeroContacto }" />
+              <div *ngIf="errorMessages?.numeroContacto" class="invalid-feedback">
+                {{ errorMessages.numeroContacto }}
+              </div>
+            </div>
+
+            <!-- Cargo -->
+            <div class="col-md-6">
+              <label class="form-label" for="editCargo">Cargo<span class="red-asterisk">*</span></label>
+              <input class="form-control" id="editCargo" type="text" placeholder="Cargo"
+                [(ngModel)]="selectedEncargado.cargo" name="cargo" required
+                [ngClass]="{ 'is-invalid': errorMessages?.cargo }" />
+              <div *ngIf="errorMessages?.cargo" class="invalid-feedback">
+                {{ errorMessages.cargo }}
+              </div>
+            </div>
+
+            <!-- Empresa -->
+            <div class="col-md-6">
+              <label class="form-label" for="editEmpresa">Empresa<span class="red-asterisk">*</span></label>
+              <select class="form-select" id="editEmpresa" name="empresaid" [(ngModel)]="selectedEncargado.empresaid.id"
+                required [ngClass]="{ 'is-invalid': errorMessages?.empresaid }">
+                <option value="">Escoge una opción</option>
+                <option *ngFor="let empresa of empresas" [ngValue]="empresa.id">{{ empresa.nombre }}</option>
+              </select>
+              <div *ngIf="errorMessages?.empresaid" class="invalid-feedback">
+                {{ errorMessages.empresaid }}
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">Cancelar</button>
+    <button class="btn btn-primary" type="button" (click)="editEncargado()">Actualizar</button>
+  </div>
+</ng-template>

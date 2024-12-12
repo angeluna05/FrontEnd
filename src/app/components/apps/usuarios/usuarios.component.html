@@ -1,0 +1,217 @@
+<app-breadcrumb [title]="'usuarios'" [items]="['Apps']" [active_item]="'usuarios'"></app-breadcrumb>
+<!-- Container-fluid starts -->
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5>Usuarios</h5>
+          <div class="media-body text-end">
+            <ul class="action-icons">
+
+            <li class="download">
+            <a (click)="download()" class="btn btn-pill">
+              <span class="icon-circle">
+                <i class="fa fa-download"></i>
+              </span>
+            </a>
+            </li>
+            </ul>
+          </div>
+        </div>
+        <div class="card-body custom-datatable noscroll">
+          <div class="custom-datatable table-responsive">
+            <div class="file-content">
+              <div class="card-header">
+                <div class="media">
+                  <form class="form-inline" action="#" method="get">
+                    <div class="form-group mb-0 text-end">
+                      <i class="fa fa-search"></i>
+                      <input class="form-control-plaintext" type="text" placeholder="Buscar..." [(ngModel)]="searchTerm"
+                        (input)="onSearchTermChange()" />
+                    </div>
+                  </form>
+                  <div class="media-body text-end">
+                    <button class="btn btn-pill btn-primary" type="button" (click)="Crear(createModal)">Registrar
+                      usuario</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col" sortable="nombre" (sort)="onSort($event)">Nombre</th>
+                  <th scope="col" sortable="correo" (sort)="onSort($event)">Correo</th>
+                  <th scope="col" sortable="estadoid.nombre" (sort)="onSort($event)">Estado</th>
+                  <th scope="col" sortable="rolid.nombre" (sort)="onSort($event)">Rol</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of tableItem$ | async">
+                  <td>
+                    <ngb-highlight [result]="item.nombre" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="item.correo" [term]="searchTerm"></ngb-highlight>
+                  </td>
+
+                  <td>
+                    <ngb-highlight [result]="item.estadoid.nombre" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="item.rolid.nombre" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <div class="action">
+                      <ul class="action-icons">
+                        <li class="edit">
+                          <a (click)="Editar(content1, item)">
+                            <span class="icon-circle">
+                              <i class="fa fa-pencil-square-o"></i>
+                            </span>
+                          </a>
+                        </li>
+                        <li class="status">
+                          <a (click)="withConfirmation(item)">
+                            <span class="icon-circle">
+                              <i class="icofont icofont-retweet"></i>
+                            </span>
+                          </a>
+                        </li>
+
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            
+
+            <div class="d-flex justify-content-between mt-3">
+              <select class="form-select" style="width: auto" name="pageSize" [(ngModel)]="service.pageSize">
+                <option [ngValue]="2">2 items per page</option>
+                <option [ngValue]="4">4 items per page</option>
+                <option [ngValue]="6">6 items per page</option>
+              </select>
+              <ngb-pagination class="ms-3" [collectionSize]="(total$ | async)!" [(page)]="service.page"
+                [pageSize]="service.pageSize"></ngb-pagination>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para crear un usuario -->
+<ng-template #createModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Registrar usuario</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <div class="card">
+      <div class="card-body">
+        <form class="needs-validation" novalidate [ngClass]="{ 'was-validated': validate }">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="createNombre">Nombre<span class="red-asterisk">*</span></label>
+              <input class="form-control" id="createNombre" type="text" placeholder="Nombre"
+                [(ngModel)]="newUsuario.nombre" name="nombre" required [ngClass]="{ 'is-invalid': errorMessages?.nombre }" required/>
+                <div *ngIf="errorMessages?.nombre" class="invalid-feedback">
+                  {{ errorMessages.nombre }}
+                </div>              </div>
+            <div class="col-md-6">
+              <label class="form-label" for="createCorreo">Correo<span class="red-asterisk">*</span></label>
+              <input class="form-control" id="createCorreo" type="email" placeholder="Correo"
+                [(ngModel)]="newUsuario.correo" name="correo" required [ngClass]="{ 'is-invalid': errorMessages?.correo }" required/>
+                <div *ngIf="errorMessages?.correo" class="invalid-feedback">
+                  {{ errorMessages.correo }}
+                </div>              </div>
+          </div>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="createContrasena">Contraseña<span class="red-asterisk">*</span></label>
+              <input class="form-control" id="createContrasena" type="password" placeholder="Contrasena" required [(ngModel)]="newUsuario.contrasena" name="contrasena" required [ngClass]="{ 'is-invalid': errorMessages?.contrasena }"/>
+                <div *ngIf="errorMessages?.contrasena" class="invalid-feedback">
+                  {{ errorMessages.contrasena}}
+                </div>              </div>
+            
+            <div class="col-md-6">
+              <label class="form-label" for="createRol">Rol<span class="red-asterisk">*</span></label>
+              <select class="form-select" id="createRol" [(ngModel)]="newUsuario.rolid" name="rolid" required [ngClass]="{ 'is-invalid': errorMessages?.rolid }"required>
+                <option value="" seleted disabled>Escoge una opción</option>
+                <option *ngFor="let rol of roles" [ngValue]="rol.id">{{ rol.nombre }}</option>
+            
+              </select>
+              <div class="invalid-feedback">Por favor, selecciona un Rol.</div>
+              </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.close('Save click')">Cerrar</button>
+    <button class="btn btn-primary" type="button" (click)="createUsuario()">Registrar</button>
+  </div>
+</ng-template>
+
+
+<!-- Modal para editar un usuario -->
+<ng-template #content1 let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Editar usuario</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <div class="card">
+      <div class="card-body">
+        <form class="needs-validation" novalidate [ngClass]="{ 'was-validated': validate }">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="editNombre">Nombre<span class="red-asterisk">*</span></label>
+              <input class="form-control" id="editNombre" type="text" placeholder="Nombre"
+                [(ngModel)]="selectedUsuario.nombre" name="nombre" required [ngClass]="{ 'is-invalid': errorMessages?.nombre }"/>
+                <div *ngIf="errorMessages?.nombre" class="invalid-feedback">
+                  {{ errorMessages.nombre }}
+                </div>            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="editCorreo">Correo<span class="red-asterisk">*</span></label>
+              <input class="form-control" id="editCorreo" type="email" placeholder="Correo"
+                [(ngModel)]="selectedUsuario.correo" name="correo" required [ngClass]="{ 'is-invalid': errorMessages?.correo }"/>
+                <div *ngIf="errorMessages?.correo" class="invalid-feedback">
+                  {{ errorMessages.correo }}
+                </div>            </div>
+          </div>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="editContrasena">Contraseña<span class="red-asterisk">*</span></label>
+              <input class="form-control" id="editContrasena" type="password" placeholder="Contrasena"
+                [(ngModel)]="selectedUsuario.contrasena" name="contrasena" required [ngClass]="{ 'is-invalid': errorMessages?.contrasena }" />
+                <div *ngIf="errorMessages?.contrasena" class="invalid-feedback">
+                  {{ errorMessages.contrasena }}
+                </div>            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label" for="editRol">Rol<span class="red-asterisk">*</span></label>
+              <select class="form-select" id="editRol" [(ngModel)]="selectedUsuario.rolid.id" name="rolid" required>
+                <option *ngFor="let rol of roles" [ngValue]="rol.id" >{{ rol.nombre }}</option>
+             
+              </select>
+              <div class="invalid-feedback">Por favor, selecciona un rol válido.</div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.close('Save click')">Cerrar</button>
+    <button type="button" class="btn btn-primary"  (click)="editUsuario()">Actualizar</button>
+  </div>
+</ng-template>
+

@@ -1,0 +1,19 @@
+
+        <div class="card o-hidden">
+            <div class="card-header">
+              <h5>Historial mensual </h5>
+            </div>
+            <div class="bar-chart-widget">
+              <div class="bottom-content card-body">
+                <div class="row">
+                  <div class="col-12">
+                    <div id="chart-widget4">
+                        <canvas baseChart class="chart" [datasets]="barChartData" [labels]="barChartLabels"
+                        [options]="barChartOptions"  [legend]="barChartLegend"
+                        [type]="barChartType" (chartHover)="chartHovered($event)"
+                        (chartClick)="chartClicked($event)"></canvas>                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>

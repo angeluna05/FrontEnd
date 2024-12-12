@@ -1,0 +1,112 @@
+<div class="container-sesiones">
+  <div class="left">
+    <div class="calendar">
+      <div class="month">
+        <i (click)="prevMonth()" class="icofont icofont-rounded-left"></i>
+        <div #date class="date"></div>
+        <i (click)="nextMonth()" class="icofont icofont-rounded-right"></i>
+      </div>
+      <div class="weekdays">
+        <div>Domingo</div>
+        <div>Lunes</div>
+        <div>Martes</div>
+        <div>Miércoles</div>
+        <div>Jueves</div>
+        <div>Viernes</div>
+        <div>Sábado</div>
+      </div>
+      <div #daysContainer class="days"></div>
+      <div class="section-indicators">
+        <span class="section-indicator active">Activo</span>
+        <span class="section-indicator postponed">Pospuesto</span>
+        <span class="section-indicator finished">Finalizado</span>
+
+      </div>
+      <div class="goto-today">
+        <div class="goto">
+          <input #dateInput type="text" placeholder="MM/AAAA" class="date-input" />
+          <button (click)="gotoDate()" class="goto-btn">Buscar</button>
+        </div>
+        <button (click)="goToToday()" class="today-btn">Hoy</button>
+
+      </div>
+    </div>
+  </div>
+  <div class="right">
+    <div class="today-date">
+      <div #eventDay class="event-day">Miércoles</div>
+      <div #eventDate class="event-date">12 Diciembre 2022</div>
+    </div>
+    <div #eventsContainer class="events"></div>
+  </div>
+</div>
+
+
+
+<ng-template #cambiarestado let-modal>
+  <div class="modal-content">
+    <div class="modal-header modal-full-width">
+      <h4 class="modal-title">{{ selectedSesion.titulo }}</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+      <div class="sesion-detalle">
+
+        
+        <div class="sesion-info">
+          <div class="info-item">
+            <small>Fecha</small>
+            <p>{{ selectedSesion.fecha | date:'mediumDate' }}</p>
+          </div>
+          <div class="info-item">
+            <small>Hora</small>
+            <p>{{ selectedSesion.horaInicio }} - {{ selectedSesion.horaFin }}</p>
+          </div>
+        </div>
+        
+        <div class="sesion-descripcion">
+          <small>Descripción</small>
+          <p>{{ selectedSesion.descripcion }}</p>
+        </div>
+        
+        <div class="sesion-detalles">
+          <div class="info-item">
+            <small>Lugar</small>
+            <p>{{ selectedSesion.lugar }}</p>
+          </div>
+          <div class="info-item">
+            <small>Tipo de Acceso</small>
+            <p>{{ selectedSesion.tipo_acceso }}</p>
+          </div>
+        </div>
+        
+       <div class=""*ngIf="isInscrito">
+        <div *ngIf="selectedSesion.link" class="sesion-link">
+          <a [href]="selectedSesion.link" target="_blank" class="btn btn-sm btn-outline-primary">
+            Ver enlace
+          </a>
+        </div>
+       </div>
+      </div>
+    </div>
+    <div class="modal-footer" *ngIf="selectedSesion.estado === 'Activo'">
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">Cancelar</button>
+  
+      <!-- Si está inscrito, mostrar botón "Retirarme" -->
+      <button *ngIf="isInscrito; else noInscrito" type="button" class="btn btn-primary"
+        (click)="retirar()">Retirarme</button>
+  
+      <!-- Si no está inscrito, mostrar botón "Participar" -->
+      <ng-template #noInscrito>
+        <button type="button" class="btn btn-primary" (click)="addEventSubmit(selectedSesion)">Participar</button>
+      </ng-template>
+    </div>
+    <div class="modal-footer" *ngIf="selectedSesion.estado === 'Finalizado'">
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">Cancelar</button>
+    </div>
+    <div class="modal-footer" *ngIf="selectedSesion.estado === 'Pospuesto'">
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">Cancelar</button>
+    </div>
+  
+  </div>
+</ng-template>

@@ -1,0 +1,307 @@
+:root {
+    --font: "Montserrat", sans-serif;
+  
+    --font-color: #1c1c1c;
+  
+    --bg-color: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
+    --bg-card: #ecf4ff;
+    --bg-projetc: rgba(192, 192, 192, 0.6);
+  
+    --grey: #44475a;
+    --orange: #ffb86c;
+    --purple: #bd93f9;
+  }
+  
+  /*===== Body =====*/
+  
+  
+  // .centered {
+  //   margin-top: 150px;
+  //   position: relative;
+  //   top: 50%;
+  //   bottom: -100px;
+  //   left: 50%;
+  //   /* bring your own prefixes */
+  //   transform: translate(-50%, -50%);
+  // }
+  
+  .container {
+    width: 100%;
+    color: var(--title-color);
+    padding: 3rem;
+  
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    display: block;
+  }
+  
+  /*===== Header =====*/
+  .perfil {
+    display: flex;
+    align-items: center;
+  }
+  
+  .perfil > img {
+    max-width: 10rem;
+    max-height: 10rem;
+    border-radius: 50%;
+    box-shadow: 0px 0px 21px 2px rgba(0, 0, 0, 0.2);
+  }
+  
+  .title {
+    margin-left: 1rem;
+    
+  }
+  
+  .title h1 {
+    font-weight: bolder;
+    font-size: 1.8rem;
+    font-family: "Unbounded", sans-serif;
+  }
+  
+  
+  /*==== texto animado ===== */
+  .line-1 {
+    position: relative;
+    top: 50%;
+    width: 28em;
+    border-right: 2px solid rgba(255, 255, 255, 0.75);
+    font-size: 2.0rem;
+    color: var(--grey);
+    white-space: nowrap;
+    overflow: hidden;
+    font-weight: 400;
+    transform: translateY(-50%);
+    font-family: "Maven Pro", sans-serif;
+  
+  }
+  
+  /* Animation */
+  .anim-typewriter {
+    animation: typewriter 4s steps(44) 1s 1 normal both,
+      blinkTextCursor 500ms steps(16) infinite normal;
+  }
+  
+  @keyframes typewriter {
+    from {
+      width: 0;
+    }
+    to {
+      width: 8em;
+    }
+  }
+  
+  @keyframes blinkTextCursor {
+    from {
+      border-right-color: rgba(255, 255, 255, 0.75);
+    }
+    to {
+      border-right-color: transparent;
+    }
+  }
+  
+  @keyframes caret {
+    0%,
+    100% {
+      opacity: 0;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+    /* ESTILOS MODALDESCRIPCION EDITAR DATOS  */
+  .modalEditar{
+    background:rgba(0,0,0,0.8);
+    bottom:0;
+    left:0;
+    opacity:0;
+    pointer-events:none;
+    position:fixed;
+    right:0;
+    top:0;
+    -webkit-transition: opacity 400ms ease-in;
+    -moz-transition: opacity 400ms ease-in;
+    transition: opacity 400ms ease-in;
+    z-index:-1;
+    display: none;
+    &:target{
+      display: block;
+      opacity:1;
+      pointer-events:auto;
+      z-index:99999;
+    }
+    .modal{
+      background-color:rgb(255, 255, 255);
+      height: 100%;
+      position:relative;
+      margin:0 auto;
+      padding:3em;
+      border-radius: 10px;
+      
+      @media (min-width: 60em) {
+        height:60%;
+       margin:5% auto;
+       max-height: 57em;
+        max-width:66em;
+        width:45%;
+        display: flex;
+        flex-wrap: wrap;
+        animation-name: modal-animation;
+  animation-duration: 0.5s;
+      }
+    > iframe, > div{
+      border:none;
+      width:100%;
+      height:100%;    
+      }
+    }
+    .close{
+      color:rgb(0, 0, 0);
+      font-size:24px;
+      padding:8px 12px;
+      position:absolute;
+      right:0;
+      text-align:center;
+      text-decoration:none;
+      top:0;
+      z-index: 1;
+    }
+  }
+  .close:hover,
+  .close:focus {
+    color: #ff0000;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .container1 .text {
+    text-align: center;
+    font-size: 41px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    background: #3498db;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .container1 form {
+    padding: 30px 0 0 0;
+  }
+  
+  .container1 form .form-row {
+    display: flex;
+    margin: 32px 0;
+  }
+  
+  .form-row .input-data {
+    width: 100%;
+    height: 40px;
+    margin: 0 20px;
+    position: relative;
+  }
+  
+  .form-row .input-data input {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: none;
+    font-size: 17px;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.12);
+    background: transparent;
+    color: #333; /* Color del texto */
+    transition: border-color 0.3s ease;
+  }
+  
+  .form-row .input-data input:focus {
+    border-color: #3498db; /* Color del borde al enfocar */
+    outline: none;
+  }
+  
+  .form-row .input-data input:focus ~ .underline {
+    transform: scaleX(1);
+  }
+  
+  .form-row .input-data input:focus ~ label,
+  .form-row .input-data input:not(:placeholder-shown) ~ label {
+    top: -20px; /* Mover la etiqueta hacia arriba */
+    font-size: 14px;
+    color: #3498db; /* Color del texto al enfocar */
+  }
+  
+  .form-row .input-data input:not(:focus):not(:placeholder-shown):valid ~ label {
+    top: -20px; /* Mantiene la etiqueta arriba si el campo tiene texto */
+    font-size: 14px;
+    color: #3498db; /* Color del texto */
+  }
+  
+  .input-data label {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    transition: all 0.3s ease;
+  }
+  
+  .input-data .underline {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #3498db; /* Color de la línea inferior */
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+  
+  .form-row .input-data input:focus ~ .underline {
+    transform: scaleX(1);
+  }
+  
+  @media (max-width: 700px) {
+    .container1 .text {
+      font-size: 30px;
+    }
+    .container1 form {
+      padding: 10px 0 0 0;
+    }
+    .container1 form .form-row {
+      display: block;
+    }
+    .form-row .input-data {
+      margin: 35px 0!important;
+    }
+  }
+  
+  .editar {
+    color: #000000;
+      padding: 0.4rem;
+      font-size: 16px;
+      text-transform: uppercase;
+      border-radius: 4px;
+      display: block;
+      width: 13%;
+      margin-left: 250px;
+      cursor: pointer;
+      border: 1px solid #3498db;
+      background: #3498db;
+      margin-top: 10px;
+      font-weight: 500;
+    font-family: "Maven Pro", sans-serif;
+  }
+  
+  .editar:hover {
+    color: rgba(0, 0, 0, 0.356);
+  
+  }
+
+/* ANIMACIÓN DE LA MODAL  */
+
+@keyframes modal-animation {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

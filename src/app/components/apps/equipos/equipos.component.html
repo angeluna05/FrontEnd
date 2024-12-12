@@ -1,0 +1,287 @@
+<app-breadcrumb [title]="'Equipos'" [items]="['Apps']" [active_item]="'Equipos'"></app-breadcrumb>
+
+<!-- Container-fluid starts -->
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <h5>Equipos</h5>
+        </div>
+        <div class="card-body custom-datatable noscroll">
+          <div class="custom-datatable table-responsive">
+            <div class="file-content">
+              <div class="card-header">
+                <div class="media">
+                  <!-- Formulario de búsqueda -->
+                  <form class="form-inline" action="#" method="get">
+                    <div class="form-group mb-0 text-end">
+                      <i class="fa fa-search"></i>
+                      <input class="form-control-plaintext" type="text" placeholder="Buscar..." [(ngModel)]="searchTerm"
+                        (input)="onSearchTermChange()" />
+                    </div>
+                  </form>
+                  <div class="media-body text-end">
+                    <button class="btn btn-pill btn-primary" type="button" (click)="Crear(createModal)">
+                      Registrar Equipo
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tabla de Equipos -->
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col" sortable="nombre" (sort)="onSort($event)">Nombre</th>
+                  <th scope="col" sortable="retosid.nombre" (sort)="onSort($event)">Reto</th>
+                  <th scope="col" >Jovenes</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of tableItem$ | async">
+                  <td>
+                    <ngb-highlight [result]="item.equipos.nombre" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="item.equiposRetos.retosid?.nombre" [term]="searchTerm">
+                    </ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="getJovenesNombres(item.jovenesEquipos.jovenesid)" [term]="searchTerm">
+                    </ngb-highlight>
+                  </td>
+                  <td>
+                    <div class="action">
+                      <ul class="action-icons">
+                        <li class="edit">
+                          <a (click)="Editar(content1, item.equipos, item.equiposRetos, item.jovenesEquipos)">
+                            <span class="icon-circle">
+                              <i class="fa fa-pencil-square-o"></i>
+                            </span>
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Paginación y tamaño de página -->
+
+            <div class="d-flex justify-content-between mt-3">
+              <select class="form-select" style="width: auto" name="pageSize" [(ngModel)]="service.pageSize">
+                <option [ngValue]="2">2 items per page</option>
+                <option [ngValue]="4">4 items per page</option>
+                <option [ngValue]="6">6 items per page</option>
+              </select>
+              <ngb-pagination class="ms-3" [collectionSize]="(total$ | async)!" [(page)]="service.page"
+                [pageSize]="service.pageSize"></ngb-pagination>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para crear un logro -->
+<ng-template #createModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Registrar Equipo</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <div class="card">
+      <div class="card-body">
+        <form class="needs-validation" novalidate [ngClass]="{ 'was-validated': validate }">
+          <div class="row g-3">
+            <!-- Nombre del equipo -->
+            <div class="col-md-12">
+              <label class="form-label" for="createNombre">Nombre<span class="red-asterisk">*</span></label>
+              <input class="form-control" id="createNombre" type="text" placeholder="Nombre"
+                [(ngModel)]="newEquipos.nombre" name="nombre" required
+                [ngClass]="{ 'is-invalid': errorMessages?.nombre }" />
+              <div *ngIf="errorMessages?.nombre" class="invalid-feedback">
+                {{ errorMessages.nombre }}
+              </div>
+            </div>
+
+
+            <div class="row g-3">
+              <!-- Selección de reto -->
+
+              <div class="col-md-6">
+                <label class="form-label" for="createReto">Reto<span class="red-asterisk">*</span></label>
+                <ng-select [items]="retos" bindLabel="nombre" bindValue="id" placeholder="Seleccione un reto"
+                  [(ngModel)]="newEquiposretos.retosid.id" required [ngClass]="{ 'is-invalid': errorMessages?.retosid }">
+                  <ng-template ng-label-tmp let-item="item">
+                    {{ item.nombre }}
+                  </ng-template>
+                  <ng-template ng-option-tmp let-item="item">
+                    {{ item.nombre }}
+                  </ng-template>
+                </ng-select>
+                <div *ngIf="errorMessages?.retosid" class="invalid-feedback">
+                  {{ errorMessages.retosid }}
+                </div>
+              </div>
+              <!-- Selección de jóvenes -->
+              <div class="col-md-6">
+                <label class="form-label" for="createJoven">Agregar Jóvenes<span class="red-asterisk">*</span></label>
+                <ng-select [items]="jovenes" bindLabel="nombre" bindValue="id" placeholder="Seleccione un joven"
+                  [(ngModel)]="newJovenesequipos.jovenesid" [ngClass]="{ 'is-invalid': errorMessages?.jovenesid }"
+                  (change)="onJovenChange($event)">
+                  <ng-template ng-label-tmp let-item="item">
+                    {{ item.nombre }} {{ item.apellido }}
+                  </ng-template>
+                  <ng-template ng-option-tmp let-item="item">
+                    {{ item.nombre }} {{ item.apellido }}
+                  </ng-template>
+                </ng-select>
+
+
+                <div *ngIf="errorMessages?.jovenesid" class="invalid-feedback">
+                  {{ errorMessages.jovenesid }}
+                </div>
+              </div>
+            </div>
+
+            <!-- <div class="col-md-6">
+
+              <label class="form-label" for="createJoven">ㅤ</label>
+
+              <button type="button" class="btn btn-primary" (click)="agregarJoven()">Añadir</button>
+            </div> -->
+          </div>
+
+          <!-- Lista de jóvenes seleccionados -->
+          <div class="row g-3 mt-3">
+            <div class="col-md-6" *ngFor="let joven of selectedJovenes; let i = index">
+              <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between align-items-center" style="color: black;">
+                  {{ joven.nombre }} {{ joven.apellido }}
+                  <i class="fa fa-trash-o" (click)="eliminarJoven(i)" style="color: red;"></i>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" type="button" (click)="modal.dismiss('cancel')">Cancelar</button>
+      <button class="btn btn-primary" type="button" (click)="createAll(modal)">Guardar</button>
+    </div>
+  </div>
+</ng-template>
+<!-- Modal para editar un equipo -->
+<ng-template #content1 let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Editar Equipo</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+
+  <div class="modal-body">
+    <div class="card">
+      <div class="card-body">
+        <form class="needs-validation" novalidate [ngClass]="{ 'was-validated': validate }">
+          <div class="row g-3">
+            <!-- Nombre del equipo -->
+            <div class="col-md-12">
+              <label class="form-label" for="editNombre">Nombre<span class="red-asterisk">*</span></label>
+              <input class="form-control" id="editNombre" type="text" placeholder="Nombre"
+                [(ngModel)]="selectedEquipos.nombre" name="nombre" required
+                [ngClass]="{ 'is-invalid': errorMessages?.nombre }" />
+              <div *ngIf="errorMessages?.nombre" class="invalid-feedback">
+                {{ errorMessages.nombre }}
+              </div>
+            </div>
+
+
+
+            <!-- Selección de jóvenes -->
+            <div class="col-md-6">
+              <label class="form-label" for="editJoven">Agregar Jóvenes<span class="red-asterisk">*</span></label>
+              <ng-select [items]="jovenes" bindLabel="nombre" bindValue="id" placeholder="Seleccione un joven"
+                [(ngModel)]="newJovenesequipos.jovenesid" [ngClass]="{ 'is-invalid': errorMessages?.jovenesid }"
+                (change)="onJovenChange($event)">
+                <ng-template ng-label-tmp let-item="item">
+                  {{ item.nombre }} {{ item.apellido }}
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item">
+                  {{ item.nombre }} {{ item.apellido }}
+                </ng-template>
+              </ng-select>
+
+
+              <div *ngIf="errorMessages?.jovenesid" class="invalid-feedback">
+                {{ errorMessages.jovenesid }}
+              </div>
+            </div>            <!-- Selección de reto -->
+            <div class="col-md-6">
+              <label class="form-label" for="editReto">Reto<span class="red-asterisk">*</span></label>
+              <ng-select 
+              [items]="retos"
+              bindLabel="nombre"
+              bindValue="id"
+              [compareWith]="compareById"
+              [(ngModel)]="selectedEquiposretos.retosid"
+              placeholder="Seleccione un reto"
+              [loading]="loading"
+              [searchable]="true"
+              [clearable]="true"
+              [virtualScroll]="true"
+              [class.is-invalid]="errorMessages?.retosid"
+              >
+              <ng-template ng-label-tmp let-item="item">
+                {{ item.nombre }}
+
+              </ng-template>
+            
+              <ng-template ng-option-tmp let-item="item">
+                 {{ item.nombre }}</ng-template>
+              </ng-select>
+              <div *ngIf="errorMessages?.retosid" class="invalid-feedback">
+                {{ errorMessages.retosid }}
+              </div>
+            </div>
+          </div>
+          <div class="row g-3 mt-3">
+            <!-- Lista de todos los jóvenes -->
+            <div class="col-md-6" *ngFor="let joven of selectedJovenes; let i = index">
+              <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between align-items-center" style="color: black;">
+                  {{ joven.nombre }} {{ joven.apellido }}
+                  <i class="fa fa-trash-o" (click)="eliminarJoven(i)" style="color: red;"></i>
+                </li>
+              </ul>
+            </div>
+
+            <div class="col-md-6" *ngFor="let joven of selectedJovenesequipos let i = index">
+              <ul class="list-group">
+                <!-- Itera sobre el array jovenes dentro del equipo seleccionado -->
+                <li 
+                  class="list-group-item d-flex justify-content-between align-items-center" style="color: black;">
+                  <!-- Accede a los detalles del joven -->
+                  {{ joven.jovenesid.nombre }} {{ joven.jovenesid.apellido }}
+                    <i class="fa fa-trash-o" (click)="eliminarJovenes(joven)" style="color: red;"></i>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botones del Modal -->
+  <div class="modal-footer">
+    <button class="btn btn-secondary" type="button" (click)="modal.dismiss('cancel')">Cancelar</button>
+    <button class="btn btn-primary" type="button" (click)="editAll(modal)">Guardar Cambios</button>
+  </div>
+</ng-template>

@@ -1,0 +1,116 @@
+/* Wrapper para las secciones del formulario */
+.section-wrapper {
+    display: flex;
+    transition: transform 0.6s ease;
+    width: 100%;
+  }
+  
+  .section {
+    width: 100%;
+    flex-shrink: 0;
+  }
+  
+  .carousel-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  .red-asterisk {
+    color: red;
+  }
+  .btn-arrow {
+    background: none;
+    border: none;
+    font-size: 1rem;
+    color: #007bff;
+    cursor: pointer;
+  }
+  
+  .btn-arrow:disabled {
+    color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .dots {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .dots span {
+    width: 12px;
+    height: 12px;
+    background-color: #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .dots .active {
+    background-color: #007bff;
+  }
+  .red-asterisk {
+    color: red;
+  }
+  .loader--text {
+    top: 200%;
+    left: 0;
+    right: 0;
+    margin: auto;
+  }
+  .loader--text:after {
+    content: "Loading";
+    font-weight: bold;
+    animation-name: loading-text;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+  }
+  
+  @keyframes loader {
+    15% {
+      transform: translateX(0);
+    }
+    45% {
+      transform: translateX(230px);
+    }
+    65% {
+      transform: translateX(230px);
+    }
+    95% {
+      transform: translateX(0);
+    }
+  }
+  @keyframes loading-text {
+    0% {
+      content: "Loading";
+    }
+    25% {
+      content: "Loading.";
+    }
+    50% {
+      content: "Loading..";
+    }
+    75% {
+      content: "Loading...";
+    }
+  }
+  .password-container {
+    position: relative;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+    width: 24px;
+    height: 24px;
+}
+
+.password-toggle svg {
+    width: 100%;
+    height: 100%;
+}

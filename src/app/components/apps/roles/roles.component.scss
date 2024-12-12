@@ -1,0 +1,112 @@
+.action-icons {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .action-icons li {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .action-icons a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .icon-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+  
+  .icon-circle i {
+    color: #000;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Colores específicos para cada acción */
+  .edit .icon-circle {
+    background-color: #ffeeba;
+  }
+  
+  .delete .icon-circle {
+    background-color: #f8d7da;
+  }
+  
+  .status .icon-circle {
+    background-color: #d4edda;
+  }
+  
+  .download .icon-circle {
+    background-color: #ffc977;
+  }
+  
+  /* Efecto hover */
+  .action-icons a:hover .icon-circle {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  .red-asterisk {
+    color: red;
+  }
+  /* Ajuste específico para el icono de lectura */
+  li.status:last-child .icon-circle {
+    background-color: #cce5ff;
+  }
+  
+  /* Asegura que el contenedor padre tenga suficiente espacio */
+  td {
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .action {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  :host {
+    display: block;
+    width: 100%;
+  }
+  
+  .card {
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-header {
+    padding: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+  
+  .card-content {
+    padding: 1rem;
+  }
+
+  .modal-content {
+    width: 135%; /* Establece el ancho en 135% */
+    margin-left: -17.5%; /* Ajusta el margen para centrar el modal */
+  }
+  

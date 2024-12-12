@@ -1,0 +1,530 @@
+<app-breadcrumb [title]="'celulas'" [items]="['Apps']" [active_item]="'celulas'"></app-breadcrumb>
+
+<!-- Container-fluid starts -->
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <h5>Células</h5>
+        </div>
+        <div class="card-body custom-datatable noscroll">
+          <div class="custom-datatable table-responsive">
+            <div class="file-content">
+              <div class="card-header">
+                <div class="media">
+                  <form class="form-inline" action="#" method="get">
+                    <div class="form-group mb-0 text-end">
+                      <i class="fa fa-search"></i>
+                      <input class="form-control-plaintext" type="text" placeholder="Buscar..." [(ngModel)]="searchTerm"
+                        (input)="onSearchTermChange()" />
+                    </div>
+                  </form>
+                  <div class="media-body text-end">
+                    <button class="btn btn-pill btn-primary" type="button" (click)="Crear(createModal)">Registrar
+                      célula</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col" sortable="nombre" (sort)="onSort($event)">Nombre</th>
+                  <th scope="col" sortable="objetivo" (sort)="onSort($event)">Objetivo</th>
+                  <th scope="col" sortable="fechaInicio" (sort)="onSort($event)">Fecha de Inicio</th>
+                  <th scope="col" sortable="fechaFin" (sort)="onSort($event)">Fecha de Fin</th>
+                  <th scope="col" sortable="estado" (sort)="onSort($event)">Estado</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of tableItem$ | async">
+                  <td>
+                    <ngb-highlight [result]="item.nombre" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="item.objetivo" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="item.fechaInicio | date:'dd/MM/yyyy'" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="item.fechaFin | date:'dd/MM/yyyy'" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="item.estado" [term]="searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <div class="action">
+                      <ul class="action-icons">
+                        <li class="status">
+                          <a (click)="VerDetalles(detalleModal, item)">
+                            <span class="icon-circle">
+                              <i class="icofont icofont-document-search"></i>
+                            </span>
+                          </a>
+                        </li>
+                        <li class="edit">
+                          <a (click)="Editar(content1, item)">
+                            <span class="icon-circle">
+                              <i class="fa fa-pencil-square-o"></i>
+                            </span>
+                          </a>
+                        </li>
+                        <li class="status">
+                          <a (click)="withConfirmation(item)">
+                            <span class="icon-circle">
+                              <i class="icofont icofont-retweet"></i>
+                            </span>
+                          </a>
+                        </li>
+                        <li class="download">
+                          <a (click)="download(item)">
+                            <span class="icon-circle">
+                              <i class="fa fa-download"></i>
+                            </span>
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </td>
+
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="d-flex justify-content-between mt-3">
+              <select class="form-select" style="width: auto" name="pageSize" [(ngModel)]="service.pageSize">
+                <option [ngValue]="2">2 items per page</option>
+                <option [ngValue]="4">4 items per page</option>
+                <option [ngValue]="6">6 items per page</option>
+              </select>
+              <ngb-pagination class="ms-3" [collectionSize]="(total$ | async)!" [(page)]="service.page"
+                [pageSize]="service.pageSize"></ngb-pagination>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para crear una célula -->
+<ng-template #createModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Crear Nueva Célula</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <form class="needs-validation" novalidate [ngClass]="{ 'was-validated': validate }">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label" for="createNombre">Nombre<span class="red-asterisk">*</span></label>
+          <input class="form-control" id="createNombre" type="text" placeholder="Nombre" [(ngModel)]="newCelula.nombre"
+            name="nombre" required [ngClass]="{ 'is-invalid': errorMessages?.nombre }" />
+          <div *ngIf="errorMessages?.nombre" class="invalid-feedback">
+            {{ errorMessages.nombre }}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="createObjetivo">Objetivo<span class="red-asterisk">*</span></label>
+          <input class="form-control" id="createObjetivo" type="text" placeholder="Objetivo"
+            [(ngModel)]="newCelula.objetivo" name="objetivo" required
+            [ngClass]="{ 'is-invalid': errorMessages?.objetivo }" />
+          <div *ngIf="errorMessages?.objetivo" class="invalid-feedback">
+            {{ errorMessages.objetivo }}
+          </div>
+        </div>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label" for="createFechaInicio">Fecha de Inicio<span class="red-asterisk">*</span></label>
+          <input class="form-control" id="createFechaInicio" type="date" placeholder="fechaInicio"
+            [(ngModel)]="newCelula.fechaInicio" name="fechaInicio" required
+            [ngClass]="{ 'is-invalid': errorMessages?.fechaInicio }" />
+          <div *ngIf="errorMessages?.fechaInicio" class="invalid-feedback">
+            {{ errorMessages.fechaInicio }}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="createFechaFin">Fecha de Fin<span class="red-asterisk">*</span></label>
+          <input class="form-control" id="createFechaFin" type="date" placeholder="fechaFin"
+            [(ngModel)]="newCelula.fechaFin" name="fechaFin" required
+            [ngClass]="{ 'is-invalid': errorMessages?.fechaFin }" />
+          <div *ngIf="errorMessages?.fechaFin" class="invalid-feedback">
+            {{ errorMessages.fechaFin }}
+          </div>
+        </div>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label" for="createMaximoPersonas">Máximo de Personas<span class="red-asterisk">*</span></label>
+          <input class="form-control" id="createMaximoPersonas" type="number" placeholder="Máximo de Personas"
+            [(ngModel)]="newCelula.maximoPersonas" name="maximoPersonas" required
+            [ngClass]="{ 'is-invalid': errorMessages?.maximoPersonas }" />
+          <div *ngIf="errorMessages?.maximoPersonas" class="invalid-feedback">
+            {{ errorMessages.maximoPersonas }}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="createTipoAcceso">Tipo de Acceso<span class="red-asterisk">*</span></label>
+          <select class="form-select" id="createTipoAcceso" [(ngModel)]="newCelula.tipo_acceso" name="tipo_acceso"
+            required>
+            <option value="Abierta">Abierta</option>
+            <option value="Cerrada">Cerrada</option>
+          </select>
+          <div class="invalid-feedback">Por favor, selecciona un tipo de acceso.</div>
+        </div>
+      </div>
+      <div class="row g-3">
+
+        <div class="col-md-6">
+          <label class="form-label" for="createInicioInscripcion">Inicio de Inscripción<span class="red-asterisk">*</span></label>
+          <input class="form-control" id="createInicioInscripcion" type="date" placeholder="Máximo de Personas"
+            [(ngModel)]="newCelula.inicioInscripcion" name="inicioInscripcion" required
+            [ngClass]="{ 'is-invalid': errorMessages?.inicioInscripcion }" />
+          <div *ngIf="errorMessages?.inicioInscripcion" class="invalid-feedback">
+            {{ errorMessages.inicioInscripcion }}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="createFinInscripcion">Fin de Inscripción<span class="red-asterisk">*</span></label>
+          <input class="form-control" id="createFinInscripcion" type="date" placeholder="Máximo de Personas"
+            [(ngModel)]="newCelula.finInscripcion" name="finInscripcion" required
+            [ngClass]="{ 'is-invalid': errorMessages?.finInscripcion }" />
+          <div *ngIf="errorMessages?.finInscripcion" class="invalid-feedback">
+            {{ errorMessages.finInscripcion }}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="createEmpleado">Facilitador<span class="red-asterisk">*</span></label>
+          <select class="form-select" id="createEmpleado" [(ngModel)]="newCelula.empleadoid" name="empleadoid" required>
+            <option *ngFor="let empleado of empleados" [ngValue]="empleado.id">{{ empleado.nombre }}</option>
+          </select>
+          <div class="invalid-feedback">Por favor, selecciona un empleado.</div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="createEncargado">Encargado<span class="red-asterisk">*</span></label>
+          <select class="form-select" id="createEncargado" [(ngModel)]="newCelula.encargadoid" name="encargadoid"
+            required>
+            <option *ngFor="let encargado of encargados" [ngValue]="encargado.id">{{ encargado.nombre }}</option>
+          </select>
+          <div class="invalid-feedback">Por favor, selecciona un encargado.</div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="createEmpresa">Empresa<span class="red-asterisk">*</span></label>
+          <select class="form-select" id="createEmpresa" [(ngModel)]="newCelula.empresaid" name="empresaid" required>
+            <option *ngFor="let empresa of empresas" [ngValue]="empresa.id">{{ empresa.nombre }}</option>
+          </select>
+          <div class="invalid-feedback">Por favor, selecciona una empresa.</div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">Cancelar</button>
+    <button type="button" class="btn btn-primary" (click)="createCelula()">Registrar</button>
+  </div>
+</ng-template>
+
+
+<!-- Modal para editar una célula existente -->
+<ng-template #content1 let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Editar Célula</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <form class="needs-validation" novalidate [ngClass]="{ 'was-validated': validate }">
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label" for="editNombre">Nombre<span class="red-asterisk">*</span></label>
+          <input class="form-control" id="editNombre" type="text" placeholder="Nombre"
+            [(ngModel)]="selectedCelula.nombre" name="nombre" required
+            [ngClass]="{ 'is-invalid': errorMessages?.nombre }" />
+          <div *ngIf="errorMessages?.nombre" class="invalid-feedback">
+            {{ errorMessages.nombre }}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="editObjetivo">Objetivo<span class="red-asterisk">*</span></label>
+          <input class="form-control" id="editObjetivo" type="text" placeholder="Objetivo"
+            [(ngModel)]="selectedCelula.objetivo" name="objetivo" required
+            [ngClass]="{ 'is-invalid': errorMessages?.objetivo }" />
+          <div *ngIf="errorMessages?.objetivo" class="invalid-feedback">
+            {{ errorMessages.objetivo }}
+          </div>
+        </div>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label" for="editFechaInicio">Fecha de Inicio<span class="red-asterisk">*</span></label>
+          <input class="form-control" id="editFechaInicio" type="date" [(ngModel)]="selectedCelula.fechaInicio"
+            name="fechaInicio" required [ngClass]="{ 'is-invalid': errorMessages?.fechaInicio }" />
+          <div *ngIf="errorMessages?.fechaInicio" class="invalid-feedback">
+            {{ errorMessages.fechaInicio }}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="editFechaFin">Fecha de Fin<span class="red-asterisk">*</span></label>
+          <input class="form-control" id="editFechaFin" type="date" [(ngModel)]="selectedCelula.fechaFin"
+            name="fechaFin" required [ngClass]="{ 'is-invalid': errorMessages?.fechaFin }" />
+          <div *ngIf="errorMessages?.fechaFin" class="invalid-feedback">
+            {{ errorMessages.fechaFin }}
+          </div>
+        </div>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label" for="editInicioInscripcion">Inicio de Inscripción<span class="red-asterisk">*</span></label>
+          <input class="form-control" id="editInicioInscripcion" type="date"
+            [(ngModel)]="selectedCelula.inicioInscripcion" name="inicioInscripcion" required
+            [ngClass]="{ 'is-invalid': errorMessages?.inicioInscripcion }" />
+          <div *ngIf="errorMessages?.inicioInscripcion" class="invalid-feedback">
+            {{ errorMessages.inicioInscripcion }}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="editFinInscripcion">Fin de Inscripción<span class="red-asterisk">*</span></label>
+          <input class="form-control" id="editFinInscripcion" type="date" [(ngModel)]="selectedCelula.finInscripcion"
+            name="finInscripcion" required [ngClass]="{ 'is-invalid': errorMessages?.finInscripcion }" />
+          <div *ngIf="errorMessages?.finInscripcion" class="invalid-feedback">
+            {{ errorMessages.finInscripcion }}
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label" for="editMaximoPersonas">Máximo de Personas<span class="red-asterisk">*</span></label>
+          <input class="form-control" id="editMaximoPersonas" type="number" placeholder="Máximo de Personas"
+            [(ngModel)]="selectedCelula.maximoPersonas" name="maximoPersonas" required
+            [ngClass]="{ 'is-invalid': errorMessages?.maximoPersonas }" />
+          <div *ngIf="errorMessages?.maximoPersonas" class="invalid-feedback">
+            {{ errorMessages.maximoPersonas }}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="editTipoAcceso">Tipo de Acceso<span class="red-asterisk">*</span></label>
+          <select class="form-select" id="editTipoAcceso" [(ngModel)]="selectedCelula.tipo_acceso" name="tipo_acceso"
+            required>
+            <option value="Abierta">Abierta</option>
+            <option value="Cerrada">Cerrada</option>
+          </select>
+          <div class="invalid-feedback">Por favor, selecciona un tipo de acceso.</div>
+        </div>
+      </div>
+      <div class="row g-3">
+        <!-- <div class="col-md-6">
+          <label class="form-label" for="editEstado">Estado</label>
+          <input class="form-control" id="editEstado" type="text" placeholder="Estado"
+            [(ngModel)]="selectedCelula.estado" name="estado" required />
+          <div class="invalid-feedback">Por favor, ingresa un estado válido.</div>
+        </div> -->
+
+        <div class="col-md-6">
+          <label class="form-label" for="editEmpleado">Facilitador<span class="red-asterisk">*</span></label>
+          <select class="form-select" id="editEmpleado" [(ngModel)]="selectedCelula.empleadoid.id" name="empleadoid"
+            required>
+            <option *ngFor="let empleado of empleados" [value]="empleado.id">{{ empleado.nombre }}</option>
+          </select>
+          <div class="invalid-feedback">Por favor, selecciona un empleado.</div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="editEncargado">Encargado<span class="red-asterisk">*</span></label>
+          <select class="form-select" id="editEncargado" [(ngModel)]="selectedCelula.encargadoid.id" name="encargadoid"
+            required>
+            <option *ngFor="let encargado of encargados" [value]="encargado.id">{{ encargado.nombre }}</option>
+          </select>
+          <div class="invalid-feedback">Por favor, selecciona un encargado.</div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="editEmpresa">Empresa<span class="red-asterisk">*</span></label>
+          <select class="form-select" id="editEmpresa" [(ngModel)]="selectedCelula.empresaid.id" name="empresaid"
+            required>
+            <option *ngFor="let empresa of empresas" [value]="empresa.id">{{ empresa.nombre }}</option>
+          </select>
+
+          <div class="invalid-feedback">Por favor, selecciona una empresa.</div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">Cancelar</button>
+    <button class="btn btn-primary" type="button" (click)="editCelula()">Actualizar</button>
+  </div>
+</ng-template>
+
+<ng-template #detalleModal let-modal>
+  <div class="modal-header p-4">
+    <div class="d-flex align-items-center">
+      <i class="fa fa-trophy me-2 fs-4"></i>
+      <h4 class="modal-title mb-0">Detalles de la Célula</h4>
+    </div>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  
+  <div class="modal-body p-4" *ngIf="selectedCelula">
+    <!-- Información General -->
+    <div class="card mb-4 border-0 bg-light">
+      <div class="card-body">
+        <h5 class="text-primary mb-3">{{ selectedCelula.nombre }}</h5>
+        <p class="lead">{{ selectedCelula.objetivo }}</p>
+      </div>
+    </div>
+    <!-- Timeline de la Célula -->
+    <div class="card mb-4 shadow-sm">
+      <div class="card-body">
+        <h5 class="text-primary mb-4">Línea de Tiempo</h5>
+        
+        <div class="timeline">
+          <!-- Inscripción -->
+          <div class="timeline-item">
+            <div class="timeline-marker bg-info"></div>
+            <div class="timeline-content">
+              <h6 class="fw-bold text-info">Período de Inscripción</h6>
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <small class="text-muted">Inicio:</small>
+                  <p class="mb-0">{{ selectedCelula?.inicioInscripcion | date:'dd MMM yyyy' }}</p>
+                </div>
+                <div>
+                  <small class="text-muted">Fin:</small>
+                  <p class="mb-0">{{ selectedCelula?.finInscripcion | date:'dd MMM yyyy' }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Desarrollo de la Célula -->
+          <div class="timeline-item">
+            <div class="timeline-marker bg-warning"></div>
+            <div class="timeline-content">
+              <h6 class="fw-bold text-warning">Período de la Célula</h6>
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <small class="text-muted">Inicio:</small>
+                  <p class="mb-0">{{ selectedCelula?.fechaInicio | date:'dd MMM yyyy' }}</p>
+                </div>
+                <div>
+                  <small class="text-muted">Fin:</small>
+                  <p class="mb-0">{{ selectedCelula?.fechaFin | date:'dd MMM yyyy' }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detalles Adicionales -->
+    <div class="card border-0 bg-white">
+      <div class="card-body">
+        <h5 class="text-primary mb-3">Detalles Adicionales</h5>
+        
+        <div class="list-group list-group-flush">
+          <div class="list-group-item d-flex justify-content-between align-items-center">
+            <span class="text-muted" style="color: black;">Tipo de Acceso</span>
+            <span class="badge bg-info">{{ selectedCelula.tipo_acceso }}</span>
+          </div>
+          <div class="list-group-item d-flex justify-content-between align-items-center"style="color: black;">
+            <span class="text-muted" >Empresa</span>
+            <span style="color: black;">{{ selectedCelula.empresaid.nombre}}</span>
+          </div>
+          <div class="list-group-item d-flex justify-content-between align-items-center">
+            <span class="text-muted" style="color: black;">Encargado</span>
+            <span style="color: black;">{{ selectedCelula.encargadoid.nombre +' '+selectedCelula.encargadoid.apellido}}</span>
+          </div>
+          <div class="list-group-item d-flex justify-content-between align-items-center"style="color: black;">
+            <span class="text-muted" >Facilitador</span>
+            <span style="color: black;">{{ selectedCelula.empleadoid.nombre +' '+ selectedCelula.empleadoid.apellido }}</span>
+          </div>
+          <div class="list-group-item d-flex justify-content-between align-items-center">
+            <span class="text-muted" style="color: black;">Estado</span>
+            <span class="badge" [ngClass]="{
+              'bg-custom-active': selectedCelula.estado === 'En curso',
+              'bg-success': selectedCelula.estado === 'Finalizada'
+            }">
+              {{ selectedCelula.estado }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer bg-light">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">Cerrar</button>
+    <button type="button" class="btn btn-primary" *ngIf="selectedCelula?.estado === 'Activo'">
+      Unirse a la Célula
+    </button>
+  </div>
+</ng-template>
+
+<style>
+.timeline {
+  position: relative;
+  padding: 1rem 0;
+}
+.lead{
+  margin: 0;
+  font-size: 1rem;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0.75rem;
+  top: 0;
+  height: 100%;
+  width: 2px;
+  background: #e9ecef;
+}
+.bg-custom-active {
+  background-color: #9544ff !important;
+  color: white; /* Asegura que el texto sea visible con el fondo morado */
+}
+
+.text-muted{
+  color: black !important;
+}
+.timeline-item {
+  position: relative;
+  padding-left: 3rem;
+  padding-bottom: 2rem;
+}
+
+.timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+.timeline-marker {
+  position: absolute;
+  left: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+}
+
+.timeline-content {
+  padding: 1.5rem;
+  background: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+}
+
+.modal-header {
+  border-bottom: none;
+}
+
+.card {
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+</style>

@@ -1,0 +1,404 @@
+<div class="container-sesiones">
+  <div class="left">
+    <div class="calendar">
+      <div class="month">
+        <i (click)="prevMonth()" class="icofont icofont-rounded-left"></i>
+        <div #date class="date"></div>
+        <i (click)="nextMonth()" class="icofont icofont-rounded-right"></i>
+      </div>
+      <div class="weekdays">
+        <div>Domingo</div>
+        <div>Lunes</div>
+        <div>Martes</div>
+        <div>Miércoles</div>
+        <div>Jueves</div>
+        <div>Viernes</div>
+        <div>Sábado</div>
+      </div>
+      <div #daysContainer class="days"></div>
+      <div class="section-indicators">
+        <span class="section-indicator active">Activo</span>
+        <span class="section-indicator postponed">Pospuesto</span>
+        <span class="section-indicator finished">Finalizado</span>
+
+      </div>
+      <div class="goto-today">
+        <div class="goto">
+          <input #dateInput type="text" placeholder="MM/AAAA" class="date-input" />
+          <button (click)="gotoDate()" class="goto-btn">Buscar</button>
+        </div>
+        <button (click)="goToToday()" class="today-btn">Hoy</button>
+      </div>
+    </div>
+  </div>
+  <div class="right">
+    <div class="today-date">
+      <div #eventDay class="event-day"></div>
+      <div class="event-date">
+        <button class="add-event" (click)="Crear(createModal)">
+          <i class="icon-plus"></i>
+        </button>
+      </div>
+
+    </div>
+    <div #eventsContainer class="events"></div>
+    <!-- HTML -->
+    <div #addEventWrapper class="add-event-wrapper">
+
+    </div>
+
+  </div>
+</div>
+
+
+<ng-template #cambiarestado let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Editar sesión</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <div class="card">
+      <div class="card-body">
+        <form class="needs-validation" novalidate [ngClass]="{ 'was-validated': validate }">
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="editTitulo">Título<span class="red-asterisk">*</span></label>
+              <input class="form-control" id="editTitulo" type="text" placeholder="Título"
+                [(ngModel)]="selectedSesion.titulo" name="titulo" required
+                [ngClass]="{ 'is-invalid': errorMessages?.titulo }" />
+              <div *ngIf="errorMessages?.titulo" class="invalid-feedback">
+                {{ errorMessages.titulo }}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="editFecha">Fecha<span class="red-asterisk">*</span></label>
+              <input class="datepicker-here form-control digits" id="editFecha" type="text" name="dp"
+                placeholder="Fecha" [(ngModel)]="selectedSesion.fecha" name="fecha" required
+                [ngClass]="{ 'is-invalid': errorMessages?.fecha }" ngbDatepicker #d="ngbDatepicker"
+                (click)="d.toggle()" />
+              <div *ngIf="errorMessages?.fecha" class="invalid-feedback">
+                {{ errorMessages.fecha }}
+              </div>
+            </div>
+          </div>
+          <div class="row g-3">
+            <div class="col-md-12">
+              <label class="form-label" for="editDescripcion">Descripción<span class="red-asterisk">*</span></label>
+              <textarea placeholder="Descripción" class="form-control" [(ngModel)]="selectedSesion.descripcion"
+                [ngClass]="{ 'is-invalid': errorMessages?.descripcion }" required></textarea>
+              <div *ngIf="errorMessages?.descripcion" class="invalid-feedback">
+                {{ errorMessages.descripcion }}
+              </div>
+            </div>
+          </div>
+          <div class="row g-3">
+            <div class="col-12 d-flex align-items-center">
+              <label class="form-label me-3" for="editHoraInicio">
+                Hora de inicio<span class="red-asterisk">*</span>
+              </label>
+              <ngb-timepicker
+              id="editHoraInicio"
+              [meridian]="true"
+              [(ngModel)]="selectedSesion.horaInicio"
+              name="horaInicio"
+              class="time-picker-custom">
+            </ngb-timepicker>
+            </div>
+            <div class="col-12">
+              <div *ngIf="errorMessages?.horaInicio" class="invalid-feedback">
+                {{ errorMessages.horaInicio }}
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-12 d-flex align-items-center">
+              <label class="form-label me-3" for="editHoraFin"> Hora de finㅤ <span class="red-asterisk">*</span>
+              </label>
+              <ngb-timepicker
+                id="editHoraFin"
+                [meridian]="meridian"
+                [(ngModel)]="selectedSesion.horaFin"
+              name="horaFin"
+                class="time-picker-custom">
+              </ngb-timepicker>
+            </div>
+            <div class="col-12">
+              <div *ngIf="errorMessages?.horaFin" class="invalid-feedback">
+                {{ errorMessages.horaFin }}
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="editLink">Link</label>
+              <input class="form-control" id="editLink" type="text" placeholder="Link"
+                [(ngModel)]="selectedSesion.link" name="link" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="editLugar">Lugar</label>
+              <input class="form-control" id="editLugar" type="text" placeholder="Lugar"
+                [(ngModel)]="selectedSesion.lugar" name="lugar" />
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-12">
+              <label class="form-label" for="editTipoAcceso">Tipo de Acceso<span class="red-asterisk">*</span></label>
+              <select class="form-select" id="editTipoAcceso" [(ngModel)]="selectedSesion.tipo_acceso"
+                name="tipo_acceso" required>
+                <option value="Abierta">Abierta</option>
+                <option value="Cerrada">Cerrada</option>
+              </select>
+              <div class="invalid-feedback">Por favor, selecciona un tipo de acceso.</div>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" type="button" (click)="modal.dismiss('cancel')">Cerrar</button>
+      <button class="btn btn-primary" type="button" (click)="editarEvento(modal)">Guardar</button>
+    </div>
+  </div>
+</ng-template>
+
+
+
+
+<ng-template #particiantes let-modal>
+  <div class="modal-content">
+    <div class="modal-header modal-full-width">
+      <h4 class="modal-title" id="modal-basic-title">Asistencia</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body modal-full-width">
+      <div class="card w-full">
+        <div class="card-content">
+          <div>
+            <table class="w-full border-collapse" style="width: 100%;">
+              <thead>
+                <tr class="bg-slate-100">
+                  <th class="border p-2 text-left">
+                    <div class="flex items-center space-x-2">Joven</div>
+                  </th>
+                  <th class="border p-2 text-left">
+                    <div class="flex items-center space-x-2">Asistío</div>
+                  </th>
+                  <th class="border p-2 text-left">
+                    <div class="flex items-center space-x-2">No asistío</div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="let module of inscripcionsesiones | slice:pageIndex * pageSize:(pageIndex + 1) * pageSize; let i = index"
+                  class="hover:bg-slate-50">
+                  <td class="border p-2 text-center">
+                    <div class="flex items-center space-x-2">
+                      {{module.jovenesid.correo}}
+                    </div>
+                  </td>
+                  <td class="border p-2 text-center">
+                    <mat-radio-group [(ngModel)]="inscripcionsesiones[i + pageIndex * pageSize].estado">
+                      <mat-radio-button [value]="'Asistío'" (change)="handleChange('Asistío', module.id)">
+                      </mat-radio-button>
+                    </mat-radio-group>
+                  </td>
+                  <td class="border p-2 text-center">
+                    <mat-radio-group [(ngModel)]="inscripcionsesiones[i + pageIndex * pageSize].estado">
+                      <mat-radio-button [value]="'No asistío'" (change)="handleChange('No asistío', module.id)">
+                      </mat-radio-button>
+                    </mat-radio-group>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Agregar el paginador debajo de la tabla -->
+            <mat-paginator [length]="inscripcionsesiones.length" [pageSize]="pageSize" (page)="onPageChange($event)"
+              [hidePageSize]="true" [showFirstLastButtons]="false" class="custom-paginator"
+              aria-label="Seleccionar página">
+            </mat-paginator>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer modal-full-width">
+      <button class="btn btn-primary" type="button" (click)="asistenciaedit()">Actualizar</button>
+      <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Cerrar</button>
+    </div>
+  </div>
+</ng-template>
+
+
+<ng-template #createModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Registrar sesión</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <div class="card">
+      <div class="card-body">
+        <form class="needs-validation" novalidate [ngClass]="{ 'was-validated': validate }">
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="createtitulo">Titulo<span class="red-asterisk">*</span></label>
+              <input class="form-control" id="createtitulo" type="text" placeholder="Titulo"
+                [(ngModel)]="newProgramacion.titulo" name="titulo" required
+                [ngClass]="{ 'is-invalid': errorMessages?.titulo }" />
+              <div *ngIf="errorMessages?.titulo" class="invalid-feedback">
+                {{ errorMessages.titulo }}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="createfecha">Fecha<span class="red-asterisk">*</span></label>
+              <input class="datepicker-here form-control digits" id="createfecha" type="text" name="dp"
+                placeholder="Fecha" [(ngModel)]="newProgramacion.fecha" name="fecha" required
+                [ngClass]="{ 'is-invalid': errorMessages?.fecha }" ngbDatepicker #d="ngbDatepicker"
+                (click)="d.toggle()" />
+              <div *ngIf="errorMessages?.fecha" class="invalid-feedback">
+                {{ errorMessages.fecha }}
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-12 d-flex align-items-center">
+              <label class="form-label me-3" for="createhoraInicio">
+                Hora de inicio<span class="red-asterisk">*</span>
+              </label>
+              <ngb-timepicker
+                id="horaInicio"
+                [meridian]="true"
+                [(ngModel)]="newProgramacion.horaInicio"
+                class="time-picker-custom">
+              </ngb-timepicker>
+            </div>
+            <div class="col-12">
+              <div *ngIf="errorMessages?.horaInicio" class="invalid-feedback">
+                {{ errorMessages.horaInicio }}
+              </div>
+            </div>
+          </div>
+          
+
+          <div class="row g-3">
+            <div class="col-12 d-flex align-items-center">
+              <label class="form-label me-3" for="createhoraFin"> Hora de finㅤ <span class="red-asterisk">*</span>
+              </label>
+              <ngb-timepicker
+                id="horaFin"
+                [meridian]="meridian"
+                [(ngModel)]="newProgramacion.horaFin"
+                class="time-picker-custom">
+              </ngb-timepicker>
+            </div>
+            <div class="col-12">
+              <div *ngIf="errorMessages?.horaFin" class="invalid-feedback">
+                {{ errorMessages.horaFin }}
+              </div>
+            </div>
+          </div>
+          
+          
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="createlink">link</label>
+              <input class="form-control" id="createlink" type="text" placeholder="link"
+                [(ngModel)]="newProgramacion.link" name="link" />
+
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="createlugar">lugar</label>
+              <input class="form-control" id="createlugar" type="text" placeholder="lugar"
+                [(ngModel)]="newProgramacion.lugar" name="lugar" />
+
+            </div>
+          </div>
+
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="createdescripcion">descripción<span class="red-asterisk">*</span></label>
+              <textarea placeholder="Descripción" class="form-control" [(ngModel)]="newProgramacion.descripcion"
+                [ngClass]="{ 'is-invalid': errorMessages?.descripcion }" required
+                ></textarea>
+
+              <div *ngIf="errorMessages?.descripcion" class="invalid-feedback">
+                {{ errorMessages.descripcion }}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="createTipoAcceso">Tipo de Acceso<span class="red-asterisk">*</span></label>
+              <select class="form-select" id="createTipoAcceso" [(ngModel)]="newProgramacion.tipo_acceso"
+                name="tipo_acceso" required>
+                <option value="Abierta">Abierta</option>
+                <option value="Cerrada">Cerrada</option>
+              </select>
+              <div class="invalid-feedback">Por favor, selecciona un tipo de acceso.</div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" type="button" (click)="modal.dismiss('cancel')">Cerrar</button>
+      <button class="btn btn-primary" type="button" (click)="addEventSubmit(modal)">Guardar</button>
+    </div>
+  </div>
+</ng-template>
+<ng-template #detalle let-modal>
+  <div class="modal-content">
+    <div class="modal-header modal-full-width">
+      <h4 class="modal-title">{{ selectedSesion.titulo }}</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+      <div class="sesion-detalle">
+
+        
+        <div class="sesion-info">
+          <div class="info-item">
+            <small>Fecha</small>
+            <p>{{ selectedSesion.fecha | date:'mediumDate' }}</p>
+          </div>
+          <div class="info-item">
+            <small>Hora</small>
+            <p>{{ selectedSesion.horaInicio }} - {{ selectedSesion.horaFin }}</p>
+          </div>
+        </div>
+        
+        <div class="sesion-descripcion">
+          <small>Descripción</small>
+          <p>{{ selectedSesion.descripcion }}</p>
+        </div>
+        
+        <div class="sesion-detalles">
+          <div class="info-item">
+            <small>Lugar</small>
+            <p>{{ selectedSesion.lugar }}</p>
+          </div>
+          <div class="info-item">
+            <small>Tipo de Acceso</small>
+            <p>{{ selectedSesion.tipo_acceso }}</p>
+          </div>
+        </div>
+        
+        <div *ngIf="selectedSesion.link" class="sesion-link">
+          <a [href]="selectedSesion.link" target="_blank" class="btn btn-sm btn-outline-primary">
+            Ver enlace
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-dark" (click)="modal.close('Close click')">Cerrar</button>
+    </div>
+  </div>
+</ng-template>

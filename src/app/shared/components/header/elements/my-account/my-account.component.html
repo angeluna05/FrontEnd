@@ -1,0 +1,9 @@
+<div class="media profile-media">
+  <div class="media-body"><span>{{ name }}</span>
+    <p class="mb-0 font-roboto">{{ rol }} <i class="middle fa fa-angle-down"></i></p>
+  </div> 
+</div>
+<ul class="profile-dropdown onhover-show-div">
+  <li><a href="/perfil"><app-feather-icons [icon]="'user'"></app-feather-icons><span>Perfil </span></a></li>
+  <li (click)="logoutFunc()"><app-feather-icons [icon]="'log-in'"></app-feather-icons><span>Cerrar sesión</span></li>
+</ul>
