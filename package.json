@@ -5,7 +5,6 @@
     "ng": "ng",
     "start": "ng serve",
     "serve-mobil":"cng serve --host=0.0.0.0",
-    "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
