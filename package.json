@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+  "start": "ng serve --host 0.0.0.0 --disable-host-check",
+  "postinstall": "npm install",
     "serve-mobil":"cng serve --host=0.0.0.0",
     "test": "ng test",
     "lint": "ng lint",
